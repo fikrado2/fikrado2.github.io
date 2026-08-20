@@ -326,11 +326,26 @@ export default function Home() {
           <div className="hp-trusted-track">
             {[0, 1].map((set) => (
               <div className="hp-trusted-set" key={set} aria-hidden={set === 1}>
-                <img src={`${import.meta.env.BASE_URL}trusted-by/Ethiopian_Artificial_Intelligence_Institute.png`} alt={set === 0 ? "Ethiopian Artificial Intelligence Institute" : ""} />
-                <img src={`${import.meta.env.BASE_URL}trusted-by/Stratosphere_Aeronautics.png`} alt={set === 0 ? "Stratosphere Aeronautics" : ""} />
-                <img src={`${import.meta.env.BASE_URL}trusted-by/world_food_programme.jpg`} alt={set === 0 ? "World Food Programme" : ""} />
-                <img src={`${import.meta.env.BASE_URL}trusted-by/GIZ.jpeg`} alt={set === 0 ? "GIZ" : ""} />
-                <img src={`${import.meta.env.BASE_URL}trusted-by/Ministry_of_Innovation_and_Technology_(Ethiopia).png`} alt={set === 0 ? "Ethiopian Ministry of Innovation and Technology" : ""} />
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/Ethiopian_Artificial_Intelligence_Institute.png`} alt={set === 0 ? "Ethiopian Artificial Intelligence Institute" : ""} />
+                  <span>Ethiopian Artificial Intelligence Institute</span>
+                </div>
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/Stratosphere_Aeronautics.png`} alt={set === 0 ? "Stratosphere Aeronautics" : ""} />
+                  <span>Stratosphere Aeronautics</span>
+                </div>
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/Somali_Books.jpg`} alt={set === 0 ? "Somali Books" : ""} />
+                  <span>Somali Books</span>
+                </div>
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/GIZ.jpeg`} alt={set === 0 ? "GIZ" : ""} />
+                  <span>GIZ</span>
+                </div>
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/Ministry_of_Innovation_and_Technology_(Ethiopia).png`} alt={set === 0 ? "Ethiopian Ministry of Innovation and Technology" : ""} />
+                  <span>Ethiopian Ministry of Innovation and Technology</span>
+                </div>
               </div>
             ))}
           </div>
