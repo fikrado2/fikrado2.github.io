@@ -308,6 +308,35 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* ===================== TRUSTED BY ===================== */}
+      <section className="hp-trusted-section" aria-labelledby="trusted-by-title">
+        <div className="container">
+          <motion.div
+            className="hp-trusted-heading"
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="eyebrow">Trusted by</span>
+            <h2 id="trusted-by-title">Organizations building a safer digital future</h2>
+          </motion.div>
+        </div>
+        <div className="hp-trusted-marquee" aria-label="Organizations that trust FIKRADO Security">
+          <div className="hp-trusted-track">
+            {[0, 1].map((set) => (
+              <div className="hp-trusted-set" key={set} aria-hidden={set === 1}>
+                <img src={`${import.meta.env.BASE_URL}trusted-by/Ethiopian_Artificial_Intelligence_Institute.png`} alt={set === 0 ? "Ethiopian Artificial Intelligence Institute" : ""} />
+                <img src={`${import.meta.env.BASE_URL}trusted-by/Stratosphere_Aeronautics.png`} alt={set === 0 ? "Stratosphere Aeronautics" : ""} />
+                <img src={`${import.meta.env.BASE_URL}trusted-by/world_food_programme.jpg`} alt={set === 0 ? "World Food Programme" : ""} />
+                <img src={`${import.meta.env.BASE_URL}trusted-by/GIZ.jpeg`} alt={set === 0 ? "GIZ" : ""} />
+                <img src={`${import.meta.env.BASE_URL}trusted-by/Ministry_of_Innovation_and_Technology_(Ethiopia).png`} alt={set === 0 ? "Ethiopian Ministry of Innovation and Technology" : ""} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ===================== CEO FEATURE ===================== */}
       <section className="hp-ceo-section">
         <div className="container">
