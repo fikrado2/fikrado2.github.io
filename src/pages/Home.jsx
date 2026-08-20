@@ -308,6 +308,41 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* ===================== CEO FEATURE ===================== */}
+      <section className="hp-ceo-section">
+        <div className="container">
+          <motion.div
+            className="hp-ceo-card"
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7 }}
+          >
+            <div className="hp-ceo-portrait-wrap">
+              <div className="hp-ceo-orbit hp-ceo-orbit-one" />
+              <div className="hp-ceo-orbit hp-ceo-orbit-two" />
+              <div className="hp-ceo-portrait-glow" />
+              <img
+                className="hp-ceo-portrait"
+                src={`${import.meta.env.BASE_URL}1763235012853.jpg`}
+                alt="Mr Yahye Abdirahman Dahir, CEO of FIKRADO Security"
+              />
+            </div>
+            <div className="hp-ceo-copy">
+              <span className="eyebrow">Meet the CEO</span>
+              <h2>
+                Mr. Yahye Abdirahman Dahir
+              </h2>
+              <p className="hp-ceo-lead">The #1 hacker in East Africa</p>
+              <p>
+                Mr. Yahye is the genius behind FIKRADO Security — a skilled ethical hacker
+                with 15 years of experience and multiple cybersecurity certifications.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ===================== CERTIFICATIONS ===================== */}
       <section className="hp-section hp-certs-section">
         <div className="container">

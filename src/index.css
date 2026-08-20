@@ -1539,6 +1539,143 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 }
 
 /* ===========================================================
+   CEO FEATURE
+   =========================================================== */
+.hp-ceo-section {
+  padding: 42px 0 26px;
+  position: relative;
+  z-index: 1;
+}
+
+.hp-ceo-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 34px 46px;
+  overflow: hidden;
+  border: 1px solid rgba(253, 224, 71, 0.2);
+  border-radius: 26px;
+  background: linear-gradient(115deg, rgba(10, 15, 26, 0.74), rgba(253, 224, 71, 0.045));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28), 0 0 44px rgba(253, 224, 71, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.hp-ceo-card::before {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  left: -140px;
+  top: -170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.13), transparent 68%);
+  pointer-events: none;
+}
+
+.hp-ceo-portrait-wrap {
+  position: relative;
+  width: 154px;
+  height: 154px;
+  flex: 0 0 154px;
+  display: grid;
+  place-items: center;
+}
+
+.hp-ceo-portrait-glow {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #fde047;
+  filter: blur(24px);
+  opacity: 0.42;
+  animation: hp-ceo-glow 3.2s ease-in-out infinite;
+}
+
+.hp-ceo-portrait {
+  position: relative;
+  z-index: 2;
+  width: 116px;
+  height: 116px;
+  object-fit: cover;
+  object-position: center top;
+  border: 3px solid #fde047;
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(253, 224, 71, 0.7), 0 0 48px rgba(253, 224, 71, 0.32);
+}
+
+.hp-ceo-orbit {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid rgba(253, 224, 71, 0.42);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hp-ceo-orbit-one {
+  inset: 1px 4px;
+  animation: hp-ceo-orbit-one 9s linear infinite;
+}
+
+.hp-ceo-orbit-two {
+  inset: 8px -5px;
+  transform: scaleY(0.48);
+  border-color: rgba(125, 211, 252, 0.35);
+  animation: hp-ceo-orbit-two 12s linear infinite;
+}
+
+.hp-ceo-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 570px;
+}
+
+.hp-ceo-copy .eyebrow {
+  margin-bottom: 12px;
+}
+
+.hp-ceo-copy h2 {
+  margin-bottom: 8px;
+  font-size: clamp(1.45rem, 3vw, 2.15rem);
+  font-weight: 800;
+  color: #eef3fb;
+}
+
+.hp-ceo-lead {
+  margin-bottom: 10px;
+  color: var(--yellow);
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.hp-ceo-copy > p:last-child {
+  max-width: 540px;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+@keyframes hp-ceo-glow {
+  0%, 100% { transform: scale(0.9); opacity: 0.34; }
+  50% { transform: scale(1.08); opacity: 0.56; }
+}
+
+@keyframes hp-ceo-orbit-one {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hp-ceo-orbit-two {
+  from { transform: scaleY(0.48) rotate(0deg); }
+  to { transform: scaleY(0.48) rotate(360deg); }
+}
+
+/* ===========================================================
    New Home Page — Professional Cybersecurity + AI Education
    =========================================================== */
 .hp {
@@ -2108,6 +2245,17 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   .hp-hero-inner,
   .hp-ai-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hp-ceo-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 28px;
+    padding: 32px 28px;
+  }
+
+  .hp-ceo-copy .eyebrow {
+    justify-content: center;
   }
 
   .hp-hero {
