@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FIKRADO Security | Cybersecurity Services & Tech Courses</title>
+    <meta name="description" content="FIKRADO Security — professional cybersecurity services and technology courses across the Horn of Africa. 50% non-profit." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://fikrado2.github.io/" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <meta property="og:title" content="FIKRADO Security | Cybersecurity Services & Tech Courses" />
+    <meta property="og:description" content="Professional cybersecurity services and technology courses across the Horn of Africa. 50% non-profit." />
+    <meta property="og:url" content="https://fikrado2.github.io/" />
+    <meta property="og:image" content="https://fikrado2.github.io/logo.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var hash = window.location.hash;
+        var search = window.location.search;
+
+        // Already a hash route — keep as-is
+        if (hash && hash.length > 1) return;
+
+        // Strip trailing slash (except root)
+        if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+
+        if (path && path !== "/") {
+          window.location.replace("/#" + path + search);
+        } else if (search) {
+          window.location.replace("/#" + "/" + search);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <h1>FIKRADO Security</h1>
+      <p>Cybersecurity services and technology courses across the Horn of Africa.</p>
+      <p><a href="https://fikrado2.github.io/">Visit FIKRADO Security</a></p>
+    </noscript>
+  </body>
+</html>
