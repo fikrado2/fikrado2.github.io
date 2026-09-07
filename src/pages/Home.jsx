@@ -330,6 +330,10 @@ export default function Home() {
                   <img src={`${import.meta.env.BASE_URL}trusted-by/Ministry_of_Innovation_and_Technology_(Ethiopia).png`} alt={set === 0 ? "Ethiopian Ministry of Innovation and Technology" : ""} />
                   <span>Ethiopian Ministry of Innovation and Technology</span>
                 </div>
+                <div className="hp-trusted-logo">
+                  <img src={`${import.meta.env.BASE_URL}trusted-by/somalibookslogo.jpg`} alt={set === 0 ? "Somali Books" : ""} />
+                  <span>Somali Books</span>
+                </div>
               </div>
             ))}
           </div>
