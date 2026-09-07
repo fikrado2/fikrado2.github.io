@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Info, Shield, BookOpen, Video, Mail, GraduationCap, Menu, X, MessageCircle, Sun, Moon } from "lucide-react";
+import { Home, Info, Shield, BookOpen, Video, Mail, GraduationCap, Menu, X, MessageCircle } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
-import { useTheme } from "../i18n/ThemeContext.jsx";
 import Logo from "./Logo.jsx";
 
 const NAV_ITEMS = [
@@ -20,7 +19,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { t, lang, setLang, languages } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
   useEffect(() => {
@@ -72,14 +70,6 @@ export default function Navbar() {
         </nav>
 
         <div className="nav-right">
-          <button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            {theme === "dark" ? <Sun size={18} strokeWidth={2.2} /> : <Moon size={18} strokeWidth={2.2} />}
-          </button>
           <a
             className="nav-contact nav-whatsapp"
             href="https://wa.me/252634048063?text=Hello%20FIKRADO%20Security%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services."
