@@ -59,6 +59,32 @@ export default function Books() {
         subtitle="Practical technology books written by Yahye Abdirahman for curious learners across the Horn of Africa."
       />
 
+      <section className="books-partnership" aria-labelledby="books-partnership-title">
+        <div className="container">
+          <motion.div
+            className="books-partnership-card glass-card"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}ChatGPT_Image_Aug_30,_2026,_09_25_42_AM.png`}
+              alt="FIKRADO Security and Somali Books publishing collaboration"
+              className="books-partnership-image"
+            />
+            <div className="books-partnership-copy">
+              <span className="eyebrow">New publishing collaboration</span>
+              <h2 id="books-partnership-title">We are now collaborating with Somali Books for book publishing.</h2>
+              <p>
+                Together, we are making practical Somali-language technology books more accessible
+                to learners across the Horn of Africa.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       <section className="section" style={{ paddingTop: 30 }}>
         <div className="container">
           <div className="books-grid">
