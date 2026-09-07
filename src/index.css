@@ -1643,6 +1643,8 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 .hp-trusted-marquee {
   position: relative;
   width: 100%;
+  margin-top: 32px;
+  padding-top: 48px;
   overflow: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
