@@ -1,0 +1,21 @@
+{
+  "name": "FIKRADO Security",
+  "short_name": "FIKRADO",
+  "description": "Professional cybersecurity services and technology courses across the Horn of Africa. 50% non-profit.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
