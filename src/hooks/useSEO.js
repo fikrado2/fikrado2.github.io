@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SITE_URL = "https://fikrado2.github.io";
+const SITE_URL = "https://fikrado1.netlify.app";
 const SITE_NAME = "FIKRADO Security";
 
 const PAGE_META = {
@@ -65,42 +65,42 @@ const COURSE_JSONLD = {
       name: "Cybersecurity Essentials",
       description:
         "A plain-language introduction to threats, defenses, and how the internet stays secure.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Linux Fundamentals",
       description: "Master the command line, file system, and administration that power modern IT.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Networking & Infrastructure",
       description: "Understand TCP/IP, routing, and network services behind every connected system.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Ethical Hacking",
       description: "Learn how attackers think so you can defend better — with legal, responsible techniques.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Web Application Security",
       description: "Find and fix OWASP top 10 vulnerabilities in real web applications.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Digital Literacy",
       description: "Accessible technology and online-safety education for students and communities.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado1.netlify.app/" },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
   ],
@@ -113,7 +113,7 @@ const SERVICE_JSONLD = {
   provider: {
     "@type": "Organization",
     name: "FIKRADO Security",
-    url: "https://fikrado2.github.io/",
+    url: "https://fikrado1.netlify.app/",
   },
   areaServed: ["Somaliland", "Ethiopia", "Horn of Africa"],
   hasOfferCatalog: {

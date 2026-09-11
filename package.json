@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://fikrado2.github.io/",
+  "homepage": "https://fikrado1.netlify.app/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

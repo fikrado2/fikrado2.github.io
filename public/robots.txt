@@ -49,4 +49,4 @@ User-agent: Applebot
 Allow: /
 
 # Sitemap location
-Sitemap: https://fikrado2.github.io/sitemap.xml
+Sitemap: https://fikrado1.netlify.app/sitemap.xml
