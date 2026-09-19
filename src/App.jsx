@@ -9,6 +9,7 @@ import Courses from "./pages/Courses.jsx";
 import Books from "./pages/Books.jsx";
 import Videos from "./pages/Videos.jsx";
 import Contact from "./pages/Contact.jsx";
+import WelcomePopup from "./components/WelcomePopup.jsx";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="*" element={<Home />} />
           </Route>
         </Routes>
+        <WelcomePopup />
         </HashRouter>
       </LanguageProvider>
     </ThemeProvider>
