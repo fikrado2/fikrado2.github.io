@@ -34,9 +34,9 @@ export default function WelcomePopup() {
           />
           <motion.div
             className="welcome-modal"
-            initial={{ opacity: 0, scale: 0.88, y: 24 }}
+            initial={{ opacity: 0, scale: 0.88, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 16 }}
+            exit={{ opacity: 0, scale: 0.9, y: -16 }}
             transition={{ type: "spring", stiffness: 280, damping: 24, mass: 0.8 }}
           >
             <div className="welcome-grid-bg" />

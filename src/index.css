@@ -2969,9 +2969,9 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 
 .welcome-modal {
   position: fixed;
-  top: 50%;
+  top: 96px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   z-index: 9999;
   width: min(420px, 92vw);
   padding: 38px 34px 30px;
