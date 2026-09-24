@@ -5,6 +5,7 @@ import PageHero from "../components/PageHero.jsx";
 import { IconBox } from "../components/Icons.jsx";
 
 const SERVICE_ICONS = [
+  { icon: "spark", color: "blue" },
   { icon: "shield", color: "green" },
   { icon: "bulb", color: "orange" },
   { icon: "network", color: "blue" },

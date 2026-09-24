@@ -177,6 +177,17 @@ export const translations = {
         "We deliver high-quality security solutions for individuals, businesses, and institutions across the region.",
       services: [
         {
+          icon: "\U0001F4BB",
+          title: "Modern Website Development",
+          desc: "We build and deploy modern, secure websites with the latest technology, professional email, and reliable domain setup.",
+          items: [
+            "Responsive modern website design",
+            "Secure deployment and hosting setup",
+            "Professional email configuration",
+            "Domain registration and connection",
+          ],
+        },
+        {
           icon: "\U0001F6E1\uFE0F",
           title: "Penetration Testing",
           desc: "Simulated cyber-attacks to expose and fix vulnerabilities before real attackers find them.",
