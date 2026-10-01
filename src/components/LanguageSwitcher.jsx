@@ -16,6 +16,12 @@ export default function LanguageSwitcher() {
   }, [isFirstVisit]);
 
   useEffect(() => {
+    const handleWelcomeOpen = () => setOpen(true);
+    window.addEventListener("fikrado-welcome-open", handleWelcomeOpen);
+    return () => window.removeEventListener("fikrado-welcome-open", handleWelcomeOpen);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {

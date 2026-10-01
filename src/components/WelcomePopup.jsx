@@ -13,10 +13,17 @@ export default function WelcomePopup() {
       const timer = setTimeout(() => {
         setShow(true);
         sessionStorage.setItem(STORAGE_KEY, "1");
+        window.dispatchEvent(new Event("fikrado-welcome-open"));
       }, 1200);
       return () => clearTimeout(timer);
     }
   }, []);
+
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(() => setShow(false), 180000);
+    return () => clearTimeout(timer);
+  }, [show]);
 
   const close = () => setShow(false);
 
