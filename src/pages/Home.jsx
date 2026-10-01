@@ -312,8 +312,8 @@ export default function Home() {
       <section className="hp-trusted-section" aria-labelledby="trusted-by-title">
         <div className="hp-trusted-marquee" aria-label="Organizations that trust FIKRADO Security">
           <div className="hp-trusted-track">
-            {[0, 1].map((set) => (
-              <div className="hp-trusted-set" key={set} aria-hidden={set === 1}>
+            {[0, 1, 2].map((set) => (
+              <div className="hp-trusted-set" key={set} aria-hidden={set !== 0}>
                 <div className="hp-trusted-logo">
                   <img src={`${import.meta.env.BASE_URL}trusted-by/Ethiopian_Artificial_Intelligence_Institute.png`} alt={set === 0 ? "Ethiopian Artificial Intelligence Institute" : ""} />
                   <span>Ethiopian Artificial Intelligence Institute</span>

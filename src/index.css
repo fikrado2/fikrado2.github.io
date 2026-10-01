@@ -1717,7 +1717,7 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 
 @keyframes hp-trusted-rotate {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(-33.333333%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
