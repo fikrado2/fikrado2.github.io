@@ -15,10 +15,17 @@ export default function LanguageSwitcher() {
     if (isFirstVisit) setOpen(true);
   }, [isFirstVisit]);
 
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
+
   useEffect(() => {
-    const handleWelcomeOpen = () => setOpen(true);
+    const handleWelcomeOpen = () => setWelcomeOpen(true);
+    const handleWelcomeClose = () => setWelcomeOpen(false);
     window.addEventListener("fikrado-welcome-open", handleWelcomeOpen);
-    return () => window.removeEventListener("fikrado-welcome-open", handleWelcomeOpen);
+    window.addEventListener("fikrado-welcome-close", handleWelcomeClose);
+    return () => {
+      window.removeEventListener("fikrado-welcome-open", handleWelcomeOpen);
+      window.removeEventListener("fikrado-welcome-close", handleWelcomeClose);
+    };
   }, []);
 
   useEffect(() => {
@@ -61,6 +68,7 @@ export default function LanguageSwitcher() {
         )}
       </AnimatePresence>
 
+      {welcomeOpen ? null : (
       <div className={`lang-switcher-fab ${isFirstVisit && open ? "glowing" : ""}`} ref={ref}>
         {isFirstVisit && open && (
           <button className="lang-fab-skip" onClick={handleClose} aria-label="Close">
@@ -105,6 +113,7 @@ export default function LanguageSwitcher() {
           )}
         </AnimatePresence>
       </div>
+      )}
     </>
   );
 }

@@ -28,11 +28,17 @@ export default function WelcomePopup() {
 
   useEffect(() => {
     if (!show) return;
-    const timer = setTimeout(() => setShow(false), 180000);
+    const timer = setTimeout(() => {
+      setShow(false);
+      window.dispatchEvent(new Event("fikrado-welcome-close"));
+    }, 5000);
     return () => clearTimeout(timer);
   }, [show]);
 
-  const close = () => setShow(false);
+  const close = () => {
+    setShow(false);
+    window.dispatchEvent(new Event("fikrado-welcome-close"));
+  };
 
   return (
     <AnimatePresence>
