@@ -8,15 +8,22 @@ export default function WelcomePopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const seen = sessionStorage.getItem(STORAGE_KEY);
-    if (!seen) {
-      const timer = setTimeout(() => {
+    if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+    const handleScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+
+      if (scrollProgress >= 0.35) {
         setShow(true);
         sessionStorage.setItem(STORAGE_KEY, "1");
         window.dispatchEvent(new Event("fikrado-welcome-open"));
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
+        window.removeEventListener("scroll", handleScroll);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -41,9 +48,9 @@ export default function WelcomePopup() {
           />
           <motion.div
             className="welcome-modal"
-            initial={{ opacity: 0, scale: 0.88, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -16 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ type: "spring", stiffness: 280, damping: 24, mass: 0.8 }}
           >
             <div className="welcome-grid-bg" />
