@@ -2974,8 +2974,8 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
-  width: min(390px, calc(100vw - 24px));
-  padding: 28px 26px 22px;
+  width: min(330px, calc(100vw - 24px));
+  padding: 20px 18px 16px;
   pointer-events: auto;
   border-radius: 20px;
   text-align: center;
@@ -3044,7 +3044,7 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 5px 14px;
+  padding: 4px 10px;
   border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 700;
@@ -3053,14 +3053,14 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   color: var(--sky);
   background: rgba(125, 211, 252, 0.07);
   border: 1px solid rgba(125, 211, 252, 0.2);
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .welcome-icon-wrap {
   position: relative;
-  width: 68px;
-  height: 68px;
-  margin: 0 auto 20px;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px;
   display: grid;
   place-items: center;
 }
@@ -3097,10 +3097,10 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 .welcome-title {
   position: relative;
   z-index: 1;
-  font-size: clamp(1.3rem, 3.2vw, 1.7rem);
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
   font-weight: 800;
   line-height: 1.18;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: var(--text);
 }
 
@@ -3108,9 +3108,9 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   position: relative;
   z-index: 1;
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 22px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 14px;
   max-width: 320px;
   margin-left: auto;
   margin-right: auto;
@@ -3122,17 +3122,17 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 26px;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .welcome-feature {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.76rem;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 0.68rem;
   font-weight: 600;
   color: #b8c8d9;
   background: rgba(255, 255, 255, 0.03);
@@ -3156,9 +3156,9 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   justify-content: center;
   gap: 9px;
   width: 100%;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-size: 0.95rem;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-size: 0.86rem;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, #25d366, #128c4a);
@@ -3184,12 +3184,12 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   position: relative;
   z-index: 1;
   display: block;
-  margin: 16px auto 0;
-  padding: 5px 16px;
+  margin: 10px auto 0;
+  padding: 4px 12px;
   border: none;
   background: none;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
