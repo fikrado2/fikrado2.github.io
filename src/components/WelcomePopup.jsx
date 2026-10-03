@@ -31,7 +31,7 @@ export default function WelcomePopup() {
     const timer = setTimeout(() => {
       setShow(false);
       window.dispatchEvent(new Event("fikrado-welcome-close"));
-    }, 5000);
+    }, 15000);
     return () => clearTimeout(timer);
   }, [show]);
 
