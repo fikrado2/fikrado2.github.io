@@ -8,4 +8,7 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: false,
   },
+  optimizeDeps: {
+    include: ["animejs"],
+  },
 });
