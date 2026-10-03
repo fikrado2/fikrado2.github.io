@@ -212,6 +212,21 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   height: 100% !important;
 }
 
+/* ---------- anime.js background (home page) ---------- */
+.bg-anime {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+}
+
+.anime-bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .bg-vignette {
   position: absolute;
   inset: 0;

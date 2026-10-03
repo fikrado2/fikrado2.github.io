@@ -3,6 +3,7 @@ import { Suspense, lazy } from "react";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import LanguageSwitcher from "./LanguageSwitcher.jsx";
+import AnimeBackground from "./AnimeBackground.jsx";
 import useSEO from "../hooks/useSEO.js";
 
 const Scene3D = lazy(() => import("./Scene3D.jsx"));
@@ -27,11 +28,17 @@ export default function Layout() {
     <>
       <div className="page-bg" data-page={variant} aria-hidden="true">
         <div className="bg-grid" />
-        <div className="bg-scene">
-          <Suspense fallback={null}>
-            <Scene3D variant={variant} key={variant} />
-          </Suspense>
-        </div>
+        {variant === "home" ? (
+          <div className="bg-anime">
+            <AnimeBackground />
+          </div>
+        ) : (
+          <div className="bg-scene">
+            <Suspense fallback={null}>
+              <Scene3D variant={variant} key={variant} />
+            </Suspense>
+          </div>
+        )}
         <div className="bg-vignette" />
       </div>
       <Navbar />
