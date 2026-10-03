@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import anime from "animejs";
+import anime from "../lib/anime.es.js";
 
 /**
  * AnimeBackground — an anime.js-driven canvas artwork for the home page.
