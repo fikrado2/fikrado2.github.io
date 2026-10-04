@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import PageHero from "../components/PageHero.jsx";
 import { IconBox } from "../components/Icons.jsx";
@@ -15,13 +16,36 @@ export default function Contact() {
   const { t } = useLanguage();
   const c = t.contact;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const data = new FormData(form);
-    const body = `Name: ${data.get("name")}\nEmail: ${data.get("email")}\nMessage: ${data.get("message")}`;
-    window.location.href = `mailto:fikrado1@gmail.com?subject=Website%20Inquiry&body=${encodeURIComponent(body)}`;
-  };
+  useEffect(() => {
+    const formId = "6207068009398272";
+    const target = `#eh_form_${formId}`;
+    window.EhAPI = window.EhAPI || {};
+    window.EhAPI.after_load = () => {
+      window.EhAPI.execute("rules");
+    };
+    window.EhAPI.set_account("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
+
+    const createForm = () => {
+      if (window.EhForms?.create) {
+        window.EhForms.create({ formId, target });
+      }
+    };
+
+    window.EhDynamicRef = window.EhDynamicRef || [];
+    window.EhDynamicRef.push(createForm);
+
+    if (!document.querySelector("script[data-engagebay-form]") && !window.EhForms) {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.dataset.engagebayForm = "true";
+      script.src = `https://d2p078bqz5urf7.cloudfront.net/jsapi/ehform.js?v${new Date().getHours()}`;
+      script.onload = createForm;
+      document.body.appendChild(script);
+    } else {
+      createForm();
+    }
+  }, []);
 
   return (
     <>
@@ -62,22 +86,20 @@ export default function Contact() {
               })}
             </motion.div>
 
-            <motion.form
+            <motion.div
               className="contact-form glass-card"
-              onSubmit={handleSubmit}
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <h3>{c.formTitle}</h3>
-              <input name="name" placeholder={c.name} required />
-              <input name="email" type="email" placeholder={c.email} required />
-              <textarea name="message" placeholder={c.message} required />
-              <button className="btn btn-primary" type="submit">
-                {c.submit}
-              </button>
-            </motion.form>
+              <div
+                className="engage-hub-form-embed"
+                id="eh_form_6207068009398272"
+                data-id="6207068009398272"
+              />
+            </motion.div>
           </div>
         </div>
       </section>
