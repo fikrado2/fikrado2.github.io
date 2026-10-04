@@ -20,15 +20,15 @@ export default function Contact() {
     const formId = "6207068009398272";
     const target = `#eh_form_${formId}`;
     window.EhAPI = window.EhAPI || {};
-    window.EhAPI.after_load = () => {
-      window.EhAPI.execute("rules");
-    };
-    window.EhAPI.set_account("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
-
     const createForm = () => {
       if (window.EhForms?.create) {
         window.EhForms.create({ formId, target });
       }
+    };
+    window.EhAPI.after_load = () => {
+      window.EhAPI.set_account?.("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
+      window.EhAPI.execute?.("rules");
+      createForm();
     };
 
     window.EhDynamicRef = window.EhDynamicRef || [];
