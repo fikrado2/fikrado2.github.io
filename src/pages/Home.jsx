@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link } from "../compat/react-router-dom.jsx";
 import { useEffect, useRef, useState } from "react";
 import {
   ShieldCheck,

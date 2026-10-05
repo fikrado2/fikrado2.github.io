@@ -1,5 +1,5 @@
-import { Outlet, useLocation } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { useLocation } from "../compat/react-router-dom.jsx";
+import { Suspense, lazy, useEffect, useState } from "react";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import LanguageSwitcher from "./LanguageSwitcher.jsx";
@@ -18,8 +18,10 @@ const ROUTE_VARIANTS = {
   "/contact": "contact",
 };
 
-export default function Layout() {
+export default function Layout({ children }) {
   const location = useLocation();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const variant = ROUTE_VARIANTS[location.pathname] || "home";
 
   useSEO(location.pathname);
@@ -28,7 +30,7 @@ export default function Layout() {
     <>
       <div className="page-bg" data-page={variant} aria-hidden="true">
         <div className="bg-grid" />
-        {variant === "home" ? (
+        {mounted && (variant === "home" ? (
           <div className="bg-anime">
             <AnimeBackground />
           </div>
@@ -38,12 +40,12 @@ export default function Layout() {
               <Scene3D variant={variant} key={variant} />
             </Suspense>
           </div>
-        )}
+        ))}
         <div className="bg-vignette" />
       </div>
       <Navbar />
       <main>
-        <Outlet />
+        {children}
       </main>
       <Footer />
       <LanguageSwitcher />

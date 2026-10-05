@@ -8,7 +8,8 @@ const VISITED_KEY = "fikrado-visited";
 
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    if (typeof window === "undefined") return "en";
+    const saved = window.localStorage.getItem(STORAGE_KEY);
     return saved || detectLanguage();
   });
   const [showLangPrompt, setShowLangPrompt] = useState(false);

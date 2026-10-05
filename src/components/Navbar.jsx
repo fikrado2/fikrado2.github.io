@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "../compat/react-router-dom.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home, Info, Shield, BookOpen, Video, Mail, GraduationCap, Menu, X, MessageCircle } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";

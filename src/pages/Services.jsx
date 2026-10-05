@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link } from "../compat/react-router-dom.jsx";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import PageHero from "../components/PageHero.jsx";
 import { IconBox } from "../components/Icons.jsx";

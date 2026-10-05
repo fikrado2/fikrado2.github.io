@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "../compat/react-router-dom.jsx";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Shield, BookOpen, Video, GraduationCap, Home, Info, Award, BadgeCheck, MessageCircle } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
