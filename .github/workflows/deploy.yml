@@ -60,16 +60,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Install Wrangler
+        # Pinned explicitly: the wrangler-action falls back to v3, which
+        # cannot resolve the entry point produced by the current Nitro layout.
+        run: npm install --global wrangler@4
+
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          # Wrangler 4 understands the current Nitro output layout. The
-          # action's default (v3) fails with "Missing entry-point" because it
-          # cannot resolve the generated server entry.
-          version: "4"
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Summary
         run: |
