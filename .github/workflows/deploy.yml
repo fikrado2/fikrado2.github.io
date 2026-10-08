@@ -65,6 +65,18 @@ jobs:
         # cannot resolve the entry point produced by the current Nitro layout.
         run: npm install --global wrangler@4
 
+      - name: Register workers.dev subdomain
+        # One-time per-account setup. Wrangler cannot do this itself and fails
+        # with "or register a workers.dev subdomain here" until it exists.
+        # A conflict here just means the subdomain is already taken; the name
+        # only has to be unique, and the deploy prints the resulting URL.
+        run: |
+          curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"subdomain":"fikrado"}' || true
+
       - name: Deploy to Cloudflare Workers
         run: wrangler deploy
         env:
