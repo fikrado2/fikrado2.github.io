@@ -24,6 +24,28 @@ export default function Contact() {
     const initializationKey = `fikradoForm${formId}`;
     let formCreated = false;
 
+    // Walks the iframe's text nodes and rewrites the vendor footer. The label
+    // can arrive split across nodes, so nodes are matched individually and
+    // the whole subtree is only rescanned when a match is actually replaced.
+    const rebrandVendorFooter = (doc) => {
+      const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      let node = walker.nextNode();
+      while (node) {
+        nodes.push(node);
+        node = walker.nextNode();
+      }
+
+      for (const textNode of nodes) {
+        const value = textNode.nodeValue;
+        if (!value || !/engagebay/i.test(value)) continue;
+        const replaced = value
+          .replace(/powered\s*by\s*engagebay/gi, "Fikrado Enterprise Emailing System")
+          .replace(/\bengagebay\b/gi, "Fikrado");
+        if (replaced !== value) textNode.nodeValue = replaced;
+      }
+    };
+
     const themeForm = () => {
       const iframes = document.querySelectorAll(`#${iframeId}`);
       Array.from(iframes).slice(1).forEach((duplicate) => {
@@ -34,6 +56,11 @@ export default function Contact() {
       const iframe = iframes[0];
       const iframeDocument = iframe?.contentDocument;
       if (!iframeDocument?.head) return;
+
+      // Rebrand the vendor footer rendered inside the form iframe. Runs on
+      // every tick (idempotent) because EngageBay injects it asynchronously,
+      // possibly after the first pass.
+      rebrandVendorFooter(iframeDocument);
 
       const existingTheme = iframeDocument.getElementById("fikrado-form-theme");
       if (existingTheme) {
@@ -206,7 +233,7 @@ export default function Contact() {
               </div>
               <div className="contact-form-trust">
                 <LockKeyhole size={13} aria-hidden="true" />
-                <span>Securely processed by EngageBay CRM</span>
+                <span>System infrastructure and security provided by Fikrado Security</span>
               </div>
             </motion.div>
           </div>
