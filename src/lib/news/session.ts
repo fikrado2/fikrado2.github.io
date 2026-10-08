@@ -114,7 +114,7 @@ export async function signIn(username: string, token: string): Promise<VerifiedI
   });
 
   if (response.status === 401) {
-    throw new Error("That access token was rejected by GitHub.");
+    throw new Error("Access rejected by FIKRADO Security.");
   }
   if (!response.ok) {
     throw new Error(`GitHub sign-in failed (${response.status}).`);
