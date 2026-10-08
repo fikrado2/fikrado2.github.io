@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "../compat/react-router-dom.jsx";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Info, Shield, BookOpen, Video, Mail, GraduationCap, Menu, X, MessageCircle } from "lucide-react";
+import { Home, Info, Shield, BookOpen, Video, Mail, GraduationCap, Menu, X, MessageCircle, Newspaper } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import Logo from "./Logo.jsx";
 
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { key: "courses", to: "/courses", icon: GraduationCap },
   { key: "books", to: "/books", icon: BookOpen },
   { key: "videos", to: "/videos", icon: Video },
+  { key: "news", to: "/news", icon: Newspaper },
   { key: "contact", to: "/contact", icon: Mail },
 ];
 

@@ -46,6 +46,13 @@ const PAGE_META = {
     keywords:
       "cybersecurity videos, security tutorials, Linux tutorial, ethical hacking video, web security, phishing defense, free tech videos, FIKRADO YouTube",
   },
+  "/news": {
+    title: "News | FIKRADO Security",
+    description:
+      "The latest announcements, course updates, and security write-ups from FIKRADO Security — cybersecurity news from Hargeisa and Jijiga.",
+    keywords:
+      "FIKRADO Security news, cybersecurity news, tech news Africa, course announcements, security advisories, Horn of Africa, Hargeisa, Jijiga",
+  },
   "/contact": {
     title: "Contact FIKRADO Security | Get in Touch",
     description:

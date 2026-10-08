@@ -89,17 +89,6 @@ export default function Contact() {
     const watchForForm = window.setInterval(themeForm, 250);
     const stopWatching = window.setTimeout(() => window.clearInterval(watchForForm), 15000);
     window.EhAPI = window.EhAPI || {};
-    if (window[initializationKey]) {
-      return () => {
-        window.clearInterval(watchForForm);
-        window.clearTimeout(stopWatching);
-      };
-    }
-    window[initializationKey] = true;
-    window.EhAPI.after_load = () => {
-      window.EhAPI.set_account("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
-      window.EhAPI.execute("rules");
-    };
 
     const createForm = () => {
       const host = document.querySelector(target);
@@ -107,6 +96,30 @@ export default function Contact() {
         formCreated = true;
         window.EhForms.create({ formId, target });
         window.setTimeout(themeForm, 200);
+      }
+    };
+
+    // Already bootstrapped on an earlier visit: the EngageBay script and
+    // window.EhForms are still around, but this mount has a fresh empty host
+    // element, so the form must still be created here. Returning early instead
+    // left the re-visited Contact page with no form at all.
+    if (window[initializationKey]) {
+      createForm();
+      return () => {
+        window.clearInterval(watchForForm);
+        window.clearTimeout(stopWatching);
+      };
+    }
+
+    window[initializationKey] = true;
+    window.EhAPI.after_load = () => {
+      // Guarded: EhAPI is an empty object until ehform.js loads, so calling
+      // into it unguarded throws and unmounts the whole page.
+      if (typeof window.EhAPI.set_account === "function") {
+        window.EhAPI.set_account("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
+      }
+      if (typeof window.EhAPI.execute === "function") {
+        window.EhAPI.execute("rules");
       }
     };
 

@@ -557,6 +557,7 @@ const SCENES = {
   courses: CoursesScene,
   books: BooksScene,
   videos: VideosScene,
+  news: VideosScene,
   contact: ContactScene,
 };
 

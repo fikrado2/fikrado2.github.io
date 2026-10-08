@@ -91,6 +91,7 @@ export const translations = {
       courses: "Courses",
       books: "Books",
       videos: "Videos",
+      news: "News",
       contact: "Contact",
     },
     common: {
@@ -443,6 +444,7 @@ export const translations = {
       courses: "Koorsooyinka",
       books: "Buugaagta",
       videos: "Fiidiyowyada",
+      news: "Warka",
       contact: "Nala Xiriir",
     },
     common: {
@@ -784,6 +786,7 @@ export const translations = {
       courses: "\u12a4\u12ab\u122d\u1235\u12ce\u1325\u1295\u1308\u122d",
       books: "\u1218\u1325\u1465\u1348\u134d\u1348\u1275",
       videos: "\u1275\u12f5\u12f0\u12ce\u12ce\u1295\u1325\u1295\u1308\u122d",
+      news: "\u12dd\u1293",
       contact: "\u12e8\u12a0\u132d\u1292\u1295",
     },
     common: {

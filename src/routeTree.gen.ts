@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoursesRouteImport } from './routes/courses'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as VideosRouteImport } from './routes/videos'
 
@@ -42,6 +43,11 @@ const CoursesRoute = CoursesRouteImport.update({
   path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/books': typeof BooksRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
   '/videos': typeof VideosRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/books': typeof BooksRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
   '/videos': typeof VideosRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/books': typeof BooksRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
   '/videos': typeof VideosRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/contact'
     | '/courses'
+    | '/news'
     | '/services'
     | '/videos'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/contact'
     | '/courses'
+    | '/news'
     | '/services'
     | '/videos'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/contact'
     | '/courses'
+    | '/news'
     | '/services'
     | '/videos'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   BooksRoute: typeof BooksRoute
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
+  NewsRoute: typeof NewsRoute
   ServicesRoute: typeof ServicesRoute
   VideosRoute: typeof VideosRoute
 }
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   BooksRoute: BooksRoute,
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
+  NewsRoute: NewsRoute,
   ServicesRoute: ServicesRoute,
   VideosRoute: VideosRoute,
 }

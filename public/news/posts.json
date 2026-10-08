@@ -1,0 +1,20 @@
+[
+  {
+    "id": "welcome-to-fikrado-news",
+    "title": "Welcome to FIKRADO News",
+    "image": "/logo.jpg",
+    "date": "2026-10-01",
+    "published": true,
+    "excerpt": "A new place for company announcements, course updates, and security write-ups from the FIKRADO Security team.",
+    "content": "We have started publishing news here so you can follow what we are building.\n\nExpect updates on:\n\n- New cybersecurity and technology courses\n- Free learning material and video tutorials\n- Security advisories and practical write-ups\n- Company news from Hargeisa and Jijiga\n\nThis page is maintained by the FIKRADO Security team. If you have a question about anything published here, get in touch through the contact page."
+  },
+  {
+    "id": "demo-course-update",
+    "title": "Course Updates Across the Horn of Africa",
+    "image": "/ChatGPT_Image_Aug_30,_2026,_09_25_42_AM.png",
+    "date": "2026-09-24",
+    "published": true,
+    "excerpt": "Sample post showing how course announcements appear on the News page.",
+    "content": "This is a sample post included so the News page can be reviewed with realistic content before real announcements are published.\n\nOur course catalogue covers cybersecurity, Linux, networking, ethical hacking, web application security, and digital literacy. Each course is built around hands-on labs rather than theory alone.\n\nDemo post — replace or remove it from the admin panel at any time."
+  }
+]

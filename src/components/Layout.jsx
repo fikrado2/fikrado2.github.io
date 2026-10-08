@@ -15,6 +15,7 @@ const ROUTE_VARIANTS = {
   "/courses": "courses",
   "/books": "books",
   "/videos": "videos",
+  "/news": "news",
   "/contact": "contact",
 };
 
