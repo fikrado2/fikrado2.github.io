@@ -221,10 +221,27 @@ Cloudflare and is never present in the repository or the deployed bundle.
 
 ### GitHub Actions
 
-The existing `.github/workflows/deploy.yml` targets GitHub Pages and its
-`npm ci` lockfile problem has been fixed, but the Pages upload step cannot
-work for this app. Replace it with a Cloudflare Pages/Workers deployment, or
-delete it and deploy with `wrangler` as above.
+`.github/workflows/deploy.yml` builds and deploys to Cloudflare Workers on every
+push to `main`. It needs two repository secrets, which you can add under
+**Settings → Secrets and variables → Actions**:
+
+| Secret | Where to get it |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers" template |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → your account → Account ID |
+
+Once those two secrets exist, every push deploys automatically.
+
+The admin password is **not** a repository secret — it is set on the Worker
+itself so it never passes through GitHub or the build:
+
+```sh
+npx wrangler secret put ADMIN_USERNAME   # fikrado
+npx wrangler secret put ADMIN_PASSWORD   # your real password
+```
+
+> The previous workflow published to GitHub Pages, which cannot host a
+> server-rendered app. It has been replaced.
 
 ---
 
