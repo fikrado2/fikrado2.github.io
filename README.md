@@ -123,7 +123,7 @@ Posts and likes are held server-side, not in this repository:
 | `GET/POST/DELETE /api/news/session` | Check / create / clear the admin session |
 
 On Cloudflare Workers the data lives in a **KV namespace** (binding `NEWS`,
-declared in `wrangler.jsonc`). Locally there is no KV binding, so nitro falls
+declared in `wrangler.json`). Locally there is no KV binding, so nitro falls
 back to in-memory storage and posts reset when the dev server stops.
 
 ### Likes
@@ -205,7 +205,7 @@ npm run build
 
 # One-time: create the KV namespace used for posts and likes
 npx wrangler kv namespace create NEWS
-# then paste the returned id into wrangler.jsonc
+# then paste the returned id into wrangler.json
 
 # One-time: store the admin password as an encrypted secret
 npx wrangler secret put ADMIN_USERNAME   # fikrado
