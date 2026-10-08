@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { translations, detectLanguage, detectLanguageByLocation, SUPPORTED_LANGS } from "./translations.js";
+import { translations, detectLanguage, detectLanguageByLocation, resolveLang, TRANSLATED_LANGS } from "./translations.js";
 
 const LanguageContext = createContext(null);
 
@@ -10,7 +10,10 @@ export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
     if (typeof window === "undefined") return "en";
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    return saved || detectLanguage();
+    // `resolveLang` guards against an untranslated language: a browser locale
+    // or geo lookup can return e.g. "ar"/"sw", and `translations[lang]` would
+    // be undefined, blanking every page including the contact form.
+    return resolveLang(saved || detectLanguage());
   });
   const [showLangPrompt, setShowLangPrompt] = useState(false);
   const [detecting, setDetecting] = useState(true);
@@ -25,7 +28,7 @@ export function LanguageProvider({ children }) {
     const hasVisited = sessionStorage.getItem(VISITED_KEY);
 
     if (saved) {
-      setLang(saved);
+      setLang(resolveLang(saved));
       setDetecting(false);
       if (!hasVisited) {
         setShowLangPrompt(true);
@@ -40,8 +43,8 @@ export function LanguageProvider({ children }) {
       const geoLang = await detectLanguageByLocation();
       if (cancelled) return;
       if (geoLang && geoLang !== detectLanguage()) {
-        setLang(geoLang);
-        localStorage.setItem(STORAGE_KEY, geoLang);
+        setLang(resolveLang(geoLang));
+        localStorage.setItem(STORAGE_KEY, resolveLang(geoLang));
       }
       setDetecting(false);
       if (!hasVisited) {
@@ -54,8 +57,9 @@ export function LanguageProvider({ children }) {
   }, []);
 
   const changeLang = (newLang) => {
-    setLang(newLang);
-    localStorage.setItem(STORAGE_KEY, newLang);
+    const resolved = resolveLang(newLang);
+    setLang(resolved);
+    localStorage.setItem(STORAGE_KEY, resolved);
     setShowLangPrompt(false);
   };
 
@@ -69,7 +73,7 @@ export function LanguageProvider({ children }) {
         lang,
         setLang: changeLang,
         t,
-        languages: SUPPORTED_LANGS,
+        languages: TRANSLATED_LANGS,
         showLangPrompt,
         dismissPrompt,
         detecting,

@@ -1,5 +1,27 @@
 export const SUPPORTED_LANGS = ["en", "so", "am", "sw", "or", "ti", "ar", "fr", "aa", "rw", "rn"];
 
+/**
+ * The languages that actually have a translation object.
+ *
+ * `SUPPORTED_LANGS` above is the intended full language list, but only `en`,
+ * `so` and `am` are translated so far. Consumers must use this list (or
+ * `resolveLang`) rather than `SUPPORTED_LANGS`, because reading
+ * `translations[lang]` for an untranslated language yields `undefined` and
+ * crashes every page that renders with it.
+ */
+export const TRANSLATED_LANGS = ["en", "so", "am"];
+
+/**
+ * Map any language code onto one that is actually translated.
+ * Falls back to English so an untranslated browser locale or geo lookup can
+ * never produce `translations[lang] === undefined`.
+ */
+export function resolveLang(lang) {
+  return typeof lang === "string" && Object.prototype.hasOwnProperty.call(translations, lang)
+    ? lang
+    : "en";
+}
+
 export const LANG_NAMES = {
   en: "English",
   so: "Soomaali",
@@ -91,6 +113,7 @@ export const translations = {
       courses: "Courses",
       books: "Books",
       videos: "Videos",
+      news: "News",
       contact: "Contact",
     },
     common: {
@@ -443,6 +466,7 @@ export const translations = {
       courses: "Koorsooyinka",
       books: "Buugaagta",
       videos: "Fiidiyowyada",
+      news: "Warbixin",
       contact: "Nala Xiriir",
     },
     common: {
@@ -784,6 +808,7 @@ export const translations = {
       courses: "\u12a4\u12ab\u122d\u1235\u12ce\u1325\u1295\u1308\u122d",
       books: "\u1218\u1325\u1465\u1348\u134d\u1348\u1275",
       videos: "\u1275\u12f5\u12f0\u12ce\u12ce\u1295\u1325\u1295\u1308\u122d",
+      news: "\u1279\u1293",
       contact: "\u12e8\u12a0\u132d\u1292\u1295",
     },
     common: {

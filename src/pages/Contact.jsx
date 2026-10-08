@@ -22,7 +22,17 @@ export default function Contact() {
     const target = `#eh_form_${formId}`;
     const iframeId = `eh_form_ifrm_${formId}`;
     const initializationKey = `fikradoForm${formId}`;
+    const accountId = "18htoi4t7qqr02ff6lpljnoq53";
+    const accountMailbox = "gmaildd";
     let formCreated = false;
+
+    // EngageBay only defines set_account/execute once its vendor bundle has run.
+    // Calling them unguarded (or before the bundle loads) threw
+    // "window.EhAPI.set_account is not a function" inside a React commit, which
+    // unmounted the whole app and left /contact blank. Optional-call so a missing
+    // vendor helper can never take the page down again.
+    const setAccount = () => window.EhAPI.set_account?.(accountId, accountMailbox);
+    const executeRules = () => window.EhAPI.execute?.("rules");
 
     const themeForm = () => {
       const iframes = document.querySelectorAll(`#${iframeId}`);
@@ -97,14 +107,18 @@ export default function Contact() {
     }
     window[initializationKey] = true;
     window.EhAPI.after_load = () => {
-      window.EhAPI.set_account("18htoi4t7qqr02ff6lpljnoq53", "gmaildd");
-      window.EhAPI.execute("rules");
+      setAccount();
+      executeRules();
     };
 
     const createForm = () => {
       const host = document.querySelector(target);
       if (window.EhForms?.create && host && !formCreated) {
         formCreated = true;
+        // window.EhForms exists only after the vendor bundle ran, so this is the
+        // first point where set_account is guaranteed to be defined. Keeps the
+        // original "configure the account before creating the form" behaviour.
+        setAccount();
         window.EhForms.create({ formId, target });
         window.setTimeout(themeForm, 200);
       }
