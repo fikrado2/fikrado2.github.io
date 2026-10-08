@@ -33,6 +33,14 @@ Hargeisa (Somaliland) and Jijiga (Ethiopia).
 - **Repository:** <https://github.com/fikrado2/fikrado2.github.io>
 - **Contact:** fikrado1@gmail.com · +252 63 4048063 · +251 98 4858498
 
+### Social
+
+| Platform | Link |
+| --- | --- |
+| GitHub | <https://github.com/fikrado-orgnasation/> |
+| LinkedIn | <https://www.linkedin.com/company/fikrado> |
+| YouTube | <https://www.youtube.com/@fikrad0> |
+
 ## Owner
 
 **Yahye Abdirahman** — [@fikrado2](https://github.com/fikrado2) · [fikrado1@gmail.com](mailto:fikrado1@gmail.com)

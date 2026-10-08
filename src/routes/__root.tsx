@@ -110,7 +110,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             { "@type": "PostalAddress", streetAddress: "10th Kabele", addressLocality: "Jijiga", addressCountry: "ET" },
           ],
           areaServed: ["Somaliland", "Ethiopia", "Horn of Africa"],
-          sameAs: ["https://www.youtube.com/@fikrad0"],
+          sameAs: [
+            "https://github.com/fikrado-orgnasation/",
+            "https://www.linkedin.com/company/fikrado",
+            "https://www.youtube.com/@fikrad0",
+          ],
         }),
       },
     ],
