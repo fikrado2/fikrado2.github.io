@@ -70,8 +70,11 @@ All code in this repository is written and maintained by Yahye Abdirahman.
 | i18n | Custom `LanguageContext` (English, Somali, Amharic) |
 | Linting | ESLint 9 + Prettier |
 | Tests | Vitest 4 |
+| Server / hosting | Nitro on Cloudflare Workers (`wrangler`) |
 
-No backend service, database, or external API is used by the site itself.
+The only backend is the News API (`/api/news/*`), served by the same
+TanStack Start app. It stores posts and likes in Cloudflare KV and holds
+the admin password as a server-side environment secret.
 
 ## Features
 
@@ -88,64 +91,50 @@ No backend service, database, or external API is used by the site itself.
 
 ## News page
 
-`/news` is a self-contained feature added for publishing company announcements
-and security write-ups. Visitors can read published posts and like them; only
-the administrator can create, edit, or delete posts.
-
-### Storage
-
-News is stored in this repository as JSON, under `public/news/`:
-
-| File | Contents |
-| --- | --- |
-| `public/news/posts.json` | All posts. Each has `id`, `title`, `image`, `content`, `date`, and `published`. |
-| `public/news/likes.json` | Shared like counts per post, plus a `demo` flag. |
-
-Reads are public — the page fetches `posts.json` and `likes.json` directly.
-Only posts with `published: true` are shown to visitors.
+`/news` publishes company announcements and security write-ups. Visitors read
+published posts and like them; only the administrator can create, edit, or
+delete posts.
 
 ### Admin sign-in
 
-The site is deployed as a **static bundle** (GitHub Pages), so there is no
-server process that could hold a secret. A password checked in the browser
-would be readable in the shipped JavaScript, which would not protect anything.
+Authentication is **server-side**. The password is compared against the
+`ADMIN_PASSWORD` environment variable with a timing-safe comparison, and a
+successful login returns an **HttpOnly** session cookie. The password itself
+is never sent to the browser, never bundled into the JavaScript, and never
+written to disk by the app.
 
-Instead the admin signs in with their **GitHub identity**:
+- **Username:** `fikrado` (from `ADMIN_USERNAME`)
+- **Password:** the value of `ADMIN_PASSWORD`
 
-- **Username** must be `fikrado`.
-- **Password** is a GitHub **fine-grained personal access token**, entered at
-  login and verified by GitHub's own API on every sign-in.
+Failed logins return a single generic message — "Access rejected by FIKRADO
+Security." — so the response never reveals whether the username or the password
+was wrong. Write endpoints also require a same-origin request.
 
-Create a token at
-<https://github.com/settings/personal-access-tokens/new> with
-**Contents: Read and write** limited to this repository.
+### Storage
 
-The token is:
+Posts and likes are held server-side, not in this repository:
 
-- never committed to this repository and never bundled into the frontend;
-- held only in `sessionStorage` for the lifetime of the browser tab;
-- never logged, never returned by the News endpoints, and never displayed;
-- authorized by GitHub, so a token without write access to this repo cannot
-  create, edit, or delete posts.
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/news` | Published posts (public) |
+| `POST /api/news` | Create a post (admin session) |
+| `GET/PATCH/DELETE /api/news/:id` | Read / update / delete one post |
+| `POST /api/news/:id/like` | Record a like |
+| `GET/POST/DELETE /api/news/session` | Check / create / clear the admin session |
 
-Signing out clears the session and removes the admin controls.
-
-See [`.env.example`](.env.example) for the placeholder environment values. The
-real credential stays outside the repository — `.env` files are gitignored.
+On Cloudflare Workers the data lives in a **KV namespace** (binding `NEWS`,
+declared in `wrangler.jsonc`). Locally there is no KV binding, so nitro falls
+back to in-memory storage and posts reset when the dev server stops.
 
 ### Likes
 
-Like counts are real: they come from the shared `likes.json` ledger and each
-visitor's own likes are recorded against their browser, so one person cannot
-inflate a count by repeatedly clicking (the button disables once liked).
-Because there is no anonymous write endpoint, a signed-out visitor's like is
-counted on their own device; a signed-in admin's likes are also written to the
-shared ledger.
+Likes are real and server-recorded. The server stores a hashed visitor
+identifier per post, so the same visitor cannot inflate a count by clicking
+again — a repeat like returns `incremented: false`.
 
-The seeded counts in `likes.json` are **demo figures** and the file is marked
-`"demo": true`, which the UI surfaces as a **"Demo like counts"** badge so they
-are not presented as genuine engagement. Set `"demo": false` once real traffic
-has replaced them.
+The seeded posts carry **demo** like counts. Those are flagged with
+`demoLikeCount`/`demoBaseline` and the UI shows a **"Demo like counts"** badge,
+so generated numbers are never presented as genuine engagement.
 
 ## Contact / CRM integration
 
@@ -204,14 +193,38 @@ The dev server runs on <http://localhost:8080>.
 
 ## Deployment
 
-Pushes to `main` run [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-which installs dependencies, runs the production build, and publishes to
-GitHub Pages.
+This is a **server-rendered** app (TanStack Start + Nitro), so it needs a host
+that can run a server. GitHub Pages cannot host it: Pages only serves static
+files, and this app renders pages per request.
 
-> **Note:** `package-lock.json` in this repository is currently out of sync
-> with `package.json`, so the `npm ci` step fails and deploys are skipped. Until
-> it is regenerated, deploys will not run. `bun.lock` is the maintained
-> lockfile and installs cleanly.
+Deploy to **Cloudflare Workers**, which the build already targets:
+
+```sh
+npm ci
+npm run build
+
+# One-time: create the KV namespace used for posts and likes
+npx wrangler kv namespace create NEWS
+# then paste the returned id into wrangler.jsonc
+
+# One-time: store the admin password as an encrypted secret
+npx wrangler secret put ADMIN_USERNAME   # fikrado
+npx wrangler secret put ADMIN_PASSWORD   # your real password
+# optional, keeps sessions valid across a password change
+npx wrangler secret put ADMIN_SESSION_SECRET
+
+npx wrangler deploy
+```
+
+The password is set with `wrangler secret put`, so it is stored encrypted by
+Cloudflare and is never present in the repository or the deployed bundle.
+
+### GitHub Actions
+
+The existing `.github/workflows/deploy.yml` targets GitHub Pages and its
+`npm ci` lockfile problem has been fixed, but the Pages upload step cannot
+work for this app. Replace it with a Cloudflare Pages/Workers deployment, or
+delete it and deploy with `wrangler` as above.
 
 ---
 

@@ -21,39 +21,20 @@ import {
 
 import PageHero from "../components/PageHero.jsx";
 import {
-  readNewsFile,
-  clearSession,
-  hasWriteAccess,
+  createPost as apiCreatePost,
+  deletePost as apiDeletePost,
+  fetchPosts,
+  likePost,
   readSession,
-  recordLike,
   signIn,
-  writeNewsFile,
+  signOut,
+  updatePost as apiUpdatePost,
 } from "../lib/news/session";
 
 const EMPTY_POSTS = [];
 const EMPTY_LIKES = { counts: {}, demo: false };
-const LOCAL_LIKED = "fikrado.news.liked";
-
 function newId() {
   return `post-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function readLocalLiked() {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(window.localStorage.getItem(LOCAL_LIKED) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function writeLocalLiked(ids) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(LOCAL_LIKED, JSON.stringify(ids));
-  } catch {
-    /* ignore */
-  }
 }
 
 function formatDate(value) {
@@ -64,43 +45,30 @@ function formatDate(value) {
 
 export default function News() {
   const [posts, setPosts] = useState(EMPTY_POSTS);
-  const [likes, setLikes] = useState(EMPTY_LIKES);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [openId, setOpenId] = useState(null);
-  const [session, setSession] = useState(null);
-  const [canWrite, setCanWrite] = useState(false);
-  const [liked, setLiked] = useState(() => readLocalLiked());
+  const [isAdmin, setIsAdmin] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [flash, setFlash] = useState("");
   const errorRef = useRef(null);
 
-  const token = session?.token;
-
   const load = useCallback(async () => {
     setStatus("loading");
     setError("");
     try {
-      const [loadedPosts, loadedLikes] = await Promise.all([
-        readNewsFile("posts", token),
-        readNewsFile("likes", token),
-      ]);
-      setPosts(Array.isArray(loadedPosts) ? loadedPosts : EMPTY_POSTS);
-      setLikes(loadedLikes && typeof loadedLikes === "object" ? loadedLikes : EMPTY_LIKES);
+      const loaded = await fetchPosts();
+      setPosts(Array.isArray(loaded) ? loaded : EMPTY_POSTS);
       setStatus("ready");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load news.");
       setStatus("error");
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    const existing = readSession();
-    setSession(existing);
-    if (existing) {
-      hasWriteAccess(existing.token).then(setCanWrite);
-    }
+    readSession().then((s) => setIsAdmin(Boolean(s?.authenticated)));
   }, []);
 
   useEffect(() => {
@@ -111,7 +79,7 @@ export default function News() {
     if (error) errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [error]);
 
-  const adminView = Boolean(session && canWrite);
+  const adminView = isAdmin;
 
   // Visitors only ever see published posts. The admin also sees drafts, so a
   // post can be created and then published instead of being invisible until it
@@ -120,7 +88,7 @@ export default function News() {
     () =>
       posts
         .filter((post) => (adminView ? true : Boolean(post?.published)))
-        .sort((a, b) => String(b.date ?? "").localeCompare(String(a.date ?? ""))),
+        .sort((a, b) => String(b.publishedAt ?? "").localeCompare(String(a.publishedAt ?? ""))),
     [posts, adminView],
   );
 
@@ -129,70 +97,71 @@ export default function News() {
     [visible, openId],
   );
 
-  async function refreshSession() {
-    const existing = readSession();
-    if (!existing) return;
-    const writable = await hasWriteAccess(existing.token);
-    setCanWrite(writable);
-    if (!writable) {
-      clearSession();
-      setSession(null);
+  function flashMessage(message) {
+    setFlash(message);
+    window.setTimeout(() => setFlash(""), 3000);
+  }
+
+  async function handleLike(post) {
+    try {
+      const result = await likePost(post.id);
+      setPosts((current) =>
+        current.map((p) => (p.id === post.id ? { ...p, likes: result.likes } : p)),
+      );
+    } catch {
+      /* keep the current count; the server rejected the like */
     }
   }
 
-  async function persist(nextPosts, message) {
+  async function savePost() {
+    if (!editing) return;
     setSaving(true);
     try {
-      await writeNewsFile("posts", nextPosts, token, message);
-      setPosts(nextPosts);
-      setFlash("Saved to the repository.");
-      window.setTimeout(() => setFlash(""), 3000);
-      return true;
+      const payload = {
+        title: editing.title,
+        excerpt: editing.excerpt ?? "",
+        content: editing.content,
+        imageUrl: editing.imageUrl ?? "",
+        publishedAt: editing.publishedAt,
+        published: Boolean(editing.published),
+      };
+      const exists = posts.some((p) => p.id === editing.id);
+      const saved = exists ? await apiUpdatePost(editing.id, payload) : await apiCreatePost(payload);
+      setPosts((current) =>
+        exists ? current.map((p) => (p.id === saved.id ? saved : p)) : [...current, saved],
+      );
+      setEditing(null);
+      flashMessage("Saved.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");
-      return false;
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleLike(post) {
-    if (liked.includes(post.id)) return;
-    const nextLiked = [...liked, post.id];
-    setLiked(nextLiked);
-    writeLocalLiked(nextLiked);
-
-    // Show the visitor's own like immediately, then try to fold it into the
-    // shared counter. Without a signed-in session the like stays on this
-    // device, which keeps it real rather than inventing shared numbers.
-    setLikes((current) => ({
-      ...current,
-      counts: { ...current.counts, [post.id]: (current.counts[post.id] ?? 0) + 1 },
-    }));
-
-    try {
-      await recordLike(likes, post.id, token);
-    } catch {
-      /* keep the local like; shared sync is best-effort */
-    }
-  }
-
-  function logout() {
-    clearSession();
-    setSession(null);
-    setCanWrite(false);
-    setEditing(null);
-    setFlash("Signed out.");
-    window.setTimeout(() => setFlash(""), 3000);
-  }
-
   async function removePost(post) {
-    if (typeof window === "undefined") return;
-    const next = posts.filter((item) => item.id !== post.id);
-    if (await persist(next, `news: delete ${post.id}`)) {
+    setSaving(true);
+    try {
+      await apiDeletePost(post.id);
+      setPosts((current) => current.filter((p) => p.id !== post.id));
       if (openId === post.id) setOpenId(null);
-      setEditing(null);
+      flashMessage("Post deleted.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not delete.");
+    } finally {
+      setSaving(false);
     }
+  }
+
+  async function handleSignOut() {
+    try {
+      await signOut();
+    } catch {
+      /* cookie already gone */
+    }
+    setIsAdmin(false);
+    setEditing(null);
+    flashMessage("Signed out.");
   }
 
   return (
@@ -211,7 +180,9 @@ export default function News() {
               <span>
                 {visible.length} {visible.length === 1 ? "post" : "posts"}
               </span>
-              {likes.demo ? <span className="news-demo-tag">Demo like counts</span> : null}
+              {posts.some((p) => p.demoLikeCount) ? (
+                  <span className="news-demo-tag">Demo like counts</span>
+                ) : null}
             </div>
 
             {adminView ? (
@@ -223,9 +194,10 @@ export default function News() {
                     setEditing({
                       id: newId(),
                       title: "",
-                      image: "",
+                      excerpt: "",
+                      imageUrl: "",
                       content: "",
-                      date: new Date().toISOString().slice(0, 10),
+                      publishedAt: new Date().toISOString().slice(0, 10),
                       published: false,
                     })
                   }
@@ -233,18 +205,17 @@ export default function News() {
                   <Plus size={15} aria-hidden="true" />
                   Create Post
                 </button>
-                <button type="button" className="btn btn-ghost news-btn-sm" onClick={logout}>
+                <button type="button" className="btn btn-ghost news-btn-sm" onClick={() => void handleSignOut()}>
                   <LogOut size={15} aria-hidden="true" />
                   Logout
                 </button>
               </div>
             ) : (
               <NewsLogin
-                onSignedIn={async (identity) => {
-                  setSession({ username: identity.login, token: identity.token });
-                  await refreshSession();
-                  setFlash("Signed in.");
-                  window.setTimeout(() => setFlash(""), 3000);
+                onSignedIn={async () => {
+                  setIsAdmin(true);
+                  await load();
+                  flashMessage("Signed in.");
                 }}
               />
             )}
@@ -297,8 +268,8 @@ export default function News() {
                   transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
                 >
                   <div className="news-card-media">
-                    {post.image ? (
-                      <img src={post.image} alt="" loading="lazy" />
+                    {post.imageUrl ? (
+                      <img src={post.imageUrl} alt="" loading="lazy" />
                     ) : (
                       <div className="news-card-media-fallback" aria-hidden="true">
                         <Newspaper size={26} />
@@ -311,7 +282,7 @@ export default function News() {
                     ) : null}
                     <span className="news-card-date">
                       <CalendarDays size={13} aria-hidden="true" />
-                      <time dateTime={post.date}>{formatDate(post.date)}</time>
+                      <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
                     </span>
                     <h3>{post.title}</h3>
                     {post.excerpt ? <p className="news-card-excerpt">{post.excerpt}</p> : null}
@@ -325,18 +296,18 @@ export default function News() {
                       </button>
                       <button
                         type="button"
-                        className={`news-like${liked.includes(post.id) ? " liked" : ""}`}
+                        className="news-like"
                         onClick={() => void handleLike(post)}
-                        disabled={liked.includes(post.id)}
-                        aria-pressed={liked.includes(post.id)}
+                        
+                        
                         aria-label={`Like ${post.title}`}
                       >
                         <Heart
                           size={15}
-                          fill={liked.includes(post.id) ? "currentColor" : "none"}
+                          
                           aria-hidden="true"
                         />
-                        <span>{(likes.counts?.[post.id] ?? 0).toLocaleString()}</span>
+                        <span>{(post.likes ?? 0).toLocaleString()}</span>
                       </button>
                     </div>
                     {adminView ? (
@@ -398,7 +369,7 @@ export default function News() {
               <div className="news-modal-body">
                 <span className="news-card-date">
                   <CalendarDays size={13} aria-hidden="true" />
-                  <time dateTime={active.date}>{formatDate(active.date)}</time>
+                  <time dateTime={active.publishedAt}>{formatDate(active.publishedAt)}</time>
                 </span>
                 <h2>{active.title}</h2>
                 <div className="news-modal-content">
@@ -411,17 +382,17 @@ export default function News() {
                 <div className="news-modal-actions">
                   <button
                     type="button"
-                    className={`news-like${liked.includes(active.id) ? " liked" : ""}`}
+                    className="news-like"
                     onClick={() => void handleLike(active)}
-                    disabled={liked.includes(active.id)}
-                    aria-pressed={liked.includes(active.id)}
+                    
+                    
                   >
                     <Heart
                       size={16}
-                      fill={liked.includes(active.id) ? "currentColor" : "none"}
+                      
                       aria-hidden="true"
                     />
-                    <span>{(likes.counts?.[active.id] ?? 0).toLocaleString()}</span>
+                    <span>{(active.likes ?? 0).toLocaleString()}</span>
                   </button>
                   <button
                     type="button"
@@ -475,8 +446,8 @@ export default function News() {
               <label className="news-field">
                 <span>Featured image URL</span>
                 <input
-                  value={editing.image}
-                  onChange={(e) => setEditing({ ...editing, image: e.target.value })}
+                  value={editing.imageUrl}
+                  onChange={(e) => setEditing({ ...editing, imageUrl: e.target.value })}
                   placeholder="/logo.jpg or https://…"
                 />
               </label>
@@ -495,8 +466,8 @@ export default function News() {
                 <span>Publication date</span>
                 <input
                   type="date"
-                  value={editing.date}
-                  onChange={(e) => setEditing({ ...editing, date: e.target.value })}
+                  value={(editing.publishedAt ?? "").slice(0, 10)}
+                  onChange={(e) => setEditing({ ...editing, publishedAt: e.target.value })}
                 />
               </label>
 
@@ -520,7 +491,7 @@ export default function News() {
                     const next = posts.some((p) => p.id === editing.id)
                       ? posts.map((p) => (p.id === editing.id ? { ...editing } : p))
                       : [...posts, { ...editing }];
-                    if (await persist(next, `news: save ${editing.id}`)) setEditing(null);
+                    await savePost();
                   }}
                 >
                   {saving ? (
@@ -539,8 +510,7 @@ export default function News() {
                 </button>
               </div>
               <p className="news-editor-note">
-                Saving writes <code>public/news/posts.json</code> on <code>main</code> through the
-                GitHub API.
+                Posts are stored server-side. Your password is never sent again after sign-in.
               </p>
             </motion.div>
           </motion.div>
@@ -552,7 +522,7 @@ export default function News() {
 
 function NewsLogin({ onSignedIn }) {
   const [username, setUsername] = useState("fikrado");
-  const [token, setToken] = useState("");
+  const [password, setPassword] = useState("");
   const [reveal, setReveal] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -562,11 +532,13 @@ function NewsLogin({ onSignedIn }) {
     setBusy(true);
     setError("");
     try {
-      const identity = await signIn(username, token);
-      setToken("");
-      await onSignedIn(identity);
+      await signIn(username, password);
+      // Cleared immediately: the password is never kept in component state
+      // after the server has issued the session cookie.
+      setPassword("");
+      await onSignedIn();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign-in failed.");
+      setError(err instanceof Error ? err.message : "Access rejected by FIKRADO Security.");
     } finally {
       setBusy(false);
     }
@@ -586,11 +558,11 @@ function NewsLogin({ onSignedIn }) {
       />
       <div className="news-login-secret">
         <input
-          aria-label="Admin access token"
+          aria-label="Admin password"
           type={reveal ? "text" : "password"}
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          placeholder="Access token"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
           autoComplete="current-password"
         />
         <button

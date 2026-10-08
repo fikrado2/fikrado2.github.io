@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fikrado2-github-io",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-10-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".output/public",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Persistence for News posts and likes.
+  //
+  // Create the namespace once, then put the resulting id here:
+  //   npx wrangler kv namespace create NEWS
+  //
+  // On a local dev run without this binding, nitro falls back to its in-memory
+  // store, so posts do not survive a restart locally.
+  "kv_namespaces": [
+    {
+      "binding": "NEWS",
+      "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+    }
+  ]
+}

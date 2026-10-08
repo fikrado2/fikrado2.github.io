@@ -1,243 +1,128 @@
-// Admin session handling for the News page.
+// Client for the News admin API.
 //
-// Why this does not use a password stored in the repo:
-//
-// The site is published as a static bundle to GitHub Pages, so there is no
-// server process that could hold a secret. Any password embedded in the
-// frontend bundle is readable by every visitor, which would make the "admin"
-// area no more protected than a hidden div.
-//
-// Instead the admin signs in with their GitHub identity. The `password` field
-// collects a GitHub fine-grained personal access token, which is:
-//   - never written to this repository, never bundled, and never persisted
-//     beyond the browser tab (sessionStorage),
-//   - verified server-side by GitHub's own API on every login,
-//   - authorized by GitHub itself, so a token without write access to this
-//     repo cannot create, edit, or delete posts.
-//
-// `ADMIN_PASSWORD` therefore stays an operator-side secret (GitHub token /
-// Actions secret) and never reaches the client.
+// Authentication is entirely server-side: the browser never holds the password.
+// Logging in POSTs the credentials to /api/news/session once; the server
+// verifies them against ADMIN_PASSWORD (a server-only env var) and replies
+// with an HttpOnly session cookie. Every later request is authenticated by
+// that cookie, so the credential is never stored in JS, sessionStorage, or
+// localStorage and cannot be read from the bundle or devtools.
 
-import type { NewsStoreFile } from "./types";
+import type { NewsPost } from "./types";
 
-const SESSION_KEY = "fikrado.news.session";
-const ADMIN_USERNAME = "fikrado";
-
-const OWNER = "fikrado2";
-const REPO = "fikrado2.github.io";
-const BRANCH = "main";
-const API = "https://api.github.com";
-
-const NEWS_DIR = "public/news";
-const POSTS_FILE = `${NEWS_DIR}/posts.json`;
-const LIKES_FILE = `${NEWS_DIR}/likes.json`;
-
-export type NewsSession = {
-  username: string;
-  token: string;
+export type NewsLikeState = {
+  demo: boolean;
 };
 
-export type VerifiedIdentity = {
-  login: string;
-  token: string;
+export type AuthState = {
+  authenticated: boolean;
+  username?: string;
 };
 
-/** Local file served by the static host; no credentials required. */
-function publicUrl(file: NewsStoreFile) {
-  const base = import.meta.env.BASE_URL || "/";
-  return `${base.replace(/\/$/, "")}/news/${file}.json`;
-}
+const BASE = "/api/news";
 
-/** Raw file straight from the repo, so admin edits appear without a redeploy. */
-function rawUrl(file: NewsStoreFile) {
-  return `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${file === "posts" ? POSTS_FILE : LIKES_FILE}`;
-}
+export const LOGIN_FAILED_MESSAGE = "Access rejected by FIKRADO Security.";
 
-export function isAdminUsername(value: string) {
-  return value.trim().toLowerCase() === ADMIN_USERNAME;
-}
-
-export function readSession(): NewsSession | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.sessionStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as NewsSession;
-    if (!parsed?.username || !parsed?.token) return null;
-    if (!isAdminUsername(parsed.username)) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function writeSession(session: NewsSession | null) {
-  if (typeof window === "undefined") return;
-  try {
-    if (session) {
-      window.sessionStorage.setItem(
-        SESSION_KEY,
-        JSON.stringify({ username: session.username, token: session.token }),
-      );
-    } else {
-      window.sessionStorage.removeItem(SESSION_KEY);
-    }
-  } catch {
-    /* storage unavailable (private mode) — session simply stays in memory */
-  }
-}
-
-export function clearSession() {
-  writeSession(null);
-}
-
-/**
- * Verifies the credentials against GitHub. Returns the confirmed identity or
- * throws. The token is never logged, never stored in the repo, and only kept
- * for the lifetime of the tab.
- */
-export async function signIn(username: string, token: string): Promise<VerifiedIdentity> {
-  if (!isAdminUsername(username)) {
-    throw new Error("Unknown username.");
-  }
-  const trimmed = token.trim();
-  if (!trimmed) {
-    throw new Error("Enter your access token.");
-  }
-
-  const response = await fetch(`${API}/user`, {
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${BASE}${path}`, {
+    credentials: "same-origin",
+    // Let the browser send the session cookie.
+    ...init,
     headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${trimmed}`,
-      "X-GitHub-Api-Version": "2022-11-28",
+      Accept: "application/json",
+      ...(init?.body ? { "Content-Type": "application/json" } : {}),
+      ...init?.headers,
     },
   });
 
-  if (response.status === 401) {
-    throw new Error("Access rejected by FIKRADO Security.");
-  }
   if (!response.ok) {
-    throw new Error(`GitHub sign-in failed (${response.status}).`);
+    let message = `Request failed (${response.status}).`;
+    try {
+      const body = (await response.json()) as { error?: string };
+      if (body?.error) message = body.error;
+    } catch {
+      /* keep the default */
+    }
+    throw new Error(message);
   }
 
-  const profile = (await response.json()) as { login?: string };
-  if (!profile.login || profile.login.toLowerCase() !== ADMIN_USERNAME) {
-    throw new Error(
-      `This token belongs to "${profile.login ?? "another account"}", not ${ADMIN_USERNAME}.`,
-    );
-  }
-
-  const session: NewsSession = { username: ADMIN_USERNAME, token: trimmed };
-  writeSession(session);
-  return { login: profile.login, token: trimmed };
-}
-
-/** Confirms the stored token still works and still owns this repository. */
-export async function hasWriteAccess(token: string): Promise<boolean> {
-  try {
-    const response = await fetch(`${API}/repos/${OWNER}/${REPO}`, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
-    if (!response.ok) return false;
-    const repo = (await response.json()) as { permissions?: { push?: boolean } };
-    return repo.permissions?.push === true;
-  } catch {
-    return false;
-  }
-}
-
-async function readJson<T>(url: string, token?: string): Promise<T> {
-  const response = await fetch(url, {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    cache: "no-store",
-  });
-  if (!response.ok) throw new Error(`Could not load news data (${response.status}).`);
   return (await response.json()) as T;
 }
 
+/** Current admin session state (drives whether admin controls are shown). */
+export async function readSession(): Promise<AuthState> {
+  try {
+    return await request<AuthState>("/session");
+  } catch {
+    return { authenticated: false };
+  }
+}
+
 /**
- * Reads a news file.
- *
- * The repo copy is preferred so a post published by the admin appears for
- * visitors straight away rather than only after the next Pages rebuild. The
- * copy bundled with the deployed site is the fallback, which keeps the page
- * working if raw.githubusercontent.com is unreachable or blocked.
+ * Verifies username + password against the server. Throws with the server's
+ * rejection message on failure. The password is sent once over the request and
+ * never retained.
  */
-export async function readNewsFile<T>(file: NewsStoreFile, token?: string): Promise<T> {
-  const sources = [rawUrl(file), publicUrl(file)];
-  let lastError: unknown;
-  for (const url of sources) {
-    try {
-      return await readJson<T>(url, token);
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  throw lastError instanceof Error ? lastError : new Error("Could not load news data.");
-}
-
-type ContentResponse = { sha: string; content: string; encoding: string };
-
-/** Writes a news file back to the repository through the Contents API. */
-export async function writeNewsFile(
-  file: NewsStoreFile,
-  value: unknown,
-  token: string,
-  message: string,
-): Promise<void> {
-  const path = file === "posts" ? POSTS_FILE : LIKES_FILE;
-  const apiUrl = `${API}/repos/${OWNER}/${REPO}/contents/${path}`;
-  const authHeaders = {
-    Accept: "application/vnd.github+json",
-    Authorization: `Bearer ${token}`,
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-
-  // The file must exist already; we update rather than create so we never
-  // clobber an unrelated path.
-  let sha: string | undefined;
-  const current = await fetch(`${apiUrl}?ref=${BRANCH}`, { headers: authHeaders });
-  if (current.ok) {
-    sha = ((await current.json()) as ContentResponse).sha;
-  } else if (current.status !== 404) {
-    throw new Error(`Could not open ${path} (${current.status}).`);
-  } else {
-    throw new Error(`${path} is missing from the repository.`);
-  }
-
-  const body = JSON.stringify(value, null, 2);
-  const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(body)));
-
-  const response = await fetch(apiUrl, {
-    method: "PUT",
-    headers: { ...authHeaders, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message,
-      content: encoded,
-      branch: BRANCH,
-      sha,
-    }),
+export async function signIn(username: string, password: string): Promise<AuthState> {
+  return request<AuthState>("/session", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
   });
-
-  if (!response.ok) {
-    throw new Error(`Could not save ${path} (${response.status}).`);
-  }
 }
 
-/** Appends a like event to the shared like ledger. */
-export async function recordLike(
-  state: { counts: Record<string, number> },
-  postId: string,
-  token?: string,
-): Promise<void> {
-  const next = {
-    ...state,
-    counts: { ...state.counts, [postId]: (state.counts[postId] ?? 0) + 1 },
-  };
-  if (!token) return; // anonymous visitors keep their like on this device
-  await writeNewsFile("likes", next, token, `news: like on ${postId}`);
+export async function signOut(): Promise<void> {
+  await request<AuthState>("/session", { method: "DELETE" });
+}
+
+/** All posts, including unpublished ones (admin only). */
+export async function fetchPosts(): Promise<NewsPost[]> {
+  const data = await request<{ posts: NewsPost[] }>("");
+  return Array.isArray(data.posts) ? data.posts : [];
+}
+
+export async function createPost(post: {
+  title: string;
+  excerpt?: string;
+  content: string;
+  imageUrl?: string;
+  publishedAt?: string;
+  published?: boolean;
+}): Promise<NewsPost> {
+  const data = await request<{ post: NewsPost }>("", {
+    method: "POST",
+    body: JSON.stringify(post),
+  });
+  return data.post;
+}
+
+export async function updatePost(
+  id: string,
+  post: {
+    title: string;
+    excerpt?: string;
+    content: string;
+    imageUrl?: string;
+    publishedAt?: string;
+    published?: boolean;
+  },
+): Promise<NewsPost> {
+  const data = await request<{ post: NewsPost }>(`/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(post),
+  });
+  return data.post;
+}
+
+export async function deletePost(id: string): Promise<void> {
+  await request(`/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+/**
+ * Records a like. The server de-duplicates per visitor cookie, so repeated
+ * clicks cannot inflate the count.
+ */
+export async function likePost(id: string): Promise<{ likes: number; liked: boolean }> {
+  return request<{ likes: number; liked: boolean }>(
+    `/${encodeURIComponent(id)}/like`,
+    { method: "POST" },
+  );
 }
