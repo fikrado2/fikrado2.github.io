@@ -1,5 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { translations, detectLanguage, detectLanguageByLocation, SUPPORTED_LANGS } from "./translations.js";
+import {
+  translations,
+  detectLanguage,
+  detectLanguageByLocation,
+  SUPPORTED_LANGS,
+} from "./translations.js";
+import { readBrowserStorage, writeBrowserStorage } from "../lib/browser-storage.js";
 
 const LanguageContext = createContext(null);
 
@@ -9,8 +15,8 @@ const VISITED_KEY = "fikrado-visited";
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
     if (typeof window === "undefined") return "en";
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    return saved || detectLanguage();
+    const saved = readBrowserStorage("localStorage", STORAGE_KEY);
+    return SUPPORTED_LANGS.includes(saved) ? saved : detectLanguage();
   });
   const [showLangPrompt, setShowLangPrompt] = useState(false);
   const [detecting, setDetecting] = useState(true);
@@ -21,15 +27,15 @@ export function LanguageProvider({ children }) {
   }, [lang]);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const hasVisited = sessionStorage.getItem(VISITED_KEY);
+    const saved = readBrowserStorage("localStorage", STORAGE_KEY);
+    const hasVisited = readBrowserStorage("sessionStorage", VISITED_KEY);
 
-    if (saved) {
+    if (SUPPORTED_LANGS.includes(saved)) {
       setLang(saved);
       setDetecting(false);
       if (!hasVisited) {
         setShowLangPrompt(true);
-        sessionStorage.setItem(VISITED_KEY, "1");
+        writeBrowserStorage("sessionStorage", VISITED_KEY, "1");
       }
       return;
     }
@@ -41,21 +47,23 @@ export function LanguageProvider({ children }) {
       if (cancelled) return;
       if (geoLang && geoLang !== detectLanguage()) {
         setLang(geoLang);
-        localStorage.setItem(STORAGE_KEY, geoLang);
+        writeBrowserStorage("localStorage", STORAGE_KEY, geoLang);
       }
       setDetecting(false);
       if (!hasVisited) {
         setShowLangPrompt(true);
-        sessionStorage.setItem(VISITED_KEY, "1");
+        writeBrowserStorage("sessionStorage", VISITED_KEY, "1");
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const changeLang = (newLang) => {
     setLang(newLang);
-    localStorage.setItem(STORAGE_KEY, newLang);
+    writeBrowserStorage("localStorage", STORAGE_KEY, newLang);
     setShowLangPrompt(false);
   };
 

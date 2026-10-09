@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageCircle, Rocket, ArrowRight } from "lucide-react";
+import { readBrowserStorage, writeBrowserStorage } from "../lib/browser-storage.js";
 
 const STORAGE_KEY = "fikrado-welcome-seen";
 
@@ -8,7 +9,7 @@ export default function WelcomePopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem(STORAGE_KEY)) return;
+    if (readBrowserStorage("sessionStorage", STORAGE_KEY)) return;
 
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -16,7 +17,7 @@ export default function WelcomePopup() {
 
       if (scrollProgress >= 0.35) {
         setShow(true);
-        sessionStorage.setItem(STORAGE_KEY, "1");
+        writeBrowserStorage("sessionStorage", STORAGE_KEY, "1");
         window.dispatchEvent(new Event("fikrado-welcome-open"));
         window.removeEventListener("scroll", handleScroll);
       }
