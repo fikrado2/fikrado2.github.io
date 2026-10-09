@@ -65,6 +65,44 @@ jobs:
         # cannot resolve the entry point produced by the current Nitro layout.
         run: npm install --global wrangler@4
 
+      - name: Ensure News KV namespace
+        # News posts and likes live in KV. Create the namespace on first run and
+        # write the real id back into wrangler.json so later builds reuse it.
+        run: |
+          if grep -q "REPLACE_WITH_YOUR_KV_NAMESPACE_ID" wrangler.json; then
+            echo "::notice::Creating the NEWS KV namespace (first run)"
+            npx wrangler kv namespace create NEWS || true
+            ID=$(npx wrangler kv namespace list --json 2>/dev/null | node -e '
+              let d = "";
+              process.stdin.on("data", (c) => (d += c)).on("end", () => {
+                try {
+                  const ns = JSON.parse(d);
+                  const hit = ns.find((x) => x.title === "NEWS") || ns[0];
+                  console.log(hit ? hit.id : "");
+                } catch {
+                  console.log("");
+                }
+              });
+            ')
+            if [ -n "$ID" ]; then
+              node -e '
+                const fs = require("fs");
+                const c = JSON.parse(fs.readFileSync("wrangler.json", "utf8"));
+                c.kv_namespaces[0].id = process.env.KV_ID;
+                fs.writeFileSync("wrangler.json", JSON.stringify(c, null, 2) + "\n");
+              ' KV_ID="$ID" 2>/dev/null || KV_ID="$ID" node -e '
+                const fs = require("fs");
+                const c = JSON.parse(fs.readFileSync("wrangler.json", "utf8"));
+                c.kv_namespaces[0].id = process.env.KV_ID;
+                fs.writeFileSync("wrangler.json", JSON.stringify(c, null, 2) + "\n");
+              '
+              echo "::notice::KV namespace id set"
+            fi
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Register workers.dev subdomain
         # One-time per-account setup. Wrangler cannot do this itself and fails
         # with "or register a workers.dev subdomain here" until it exists.
