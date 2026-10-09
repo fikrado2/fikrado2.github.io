@@ -118,6 +118,31 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+      - name: Diagnose subdomain registration
+        if: always()
+        run: |
+          echo "--- token verify ---"
+          curl -s "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | head -c 300
+          echo; echo "--- account id we hold ---"
+          echo "${CLOUDFLARE_ACCOUNT_ID:0:6}...(len=${#CLOUDFLARE_ACCOUNT_ID})"
+          echo "--- accounts visible to this token ---"
+          curl -s "https://api.cloudflare.com/client/v4/accounts" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | head -c 600
+          echo; echo "--- existing workers.dev subdomain (GET) ---"
+          curl -s "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | head -c 400
+          echo; echo "--- attempt create ---"
+          curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"subdomain":"fikrado"}' | head -c 400
+          echo
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Deploy to Cloudflare Workers
         # Wrangler offers to register the workers.dev subdomain on first deploy
         # but CI has no TTY, so it fails. Answer the prompt automatically.
