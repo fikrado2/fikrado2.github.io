@@ -70,11 +70,10 @@ All code in this repository is written and maintained by Yahye Abdirahman.
 | i18n | Custom `LanguageContext` (English, Somali, Amharic) |
 | Linting | ESLint 9 + Prettier |
 | Tests | Vitest 4 |
-| Server / hosting | Nitro on Cloudflare Workers (`wrangler`) |
+| Hosting | GitHub Pages (pre-rendered static site) |
 
-The only backend is the News API (`/api/news/*`), served by the same
-TanStack Start app. It stores posts and likes in Cloudflare KV and holds
-the admin password as a server-side environment secret.
+The News API (`/api/news/*`) is available when running the app on a server.
+The GitHub Pages deployment is static and does not include that API.
 
 ## Features
 
@@ -85,7 +84,7 @@ the admin password as a server-side environment secret.
 - **Videos** — embedded YouTube tutorial library.
 - **About** — mission, values, team, and offices.
 - **Contact** — contact details plus an **EngageBay CRM** web form (see below).
-- **News** *(new)* — see below.
+- **News** — shown as unavailable on the static GitHub Pages deployment; its server-backed posts and admin functions require a server.
 - **Multilingual** — English, Somali, and Amharic with automatic detection.
 - **Accessibility & SEO** — semantic markup, meta/JSON-LD tags, sitemap, and reduced-motion support.
 
@@ -94,6 +93,10 @@ the admin password as a server-side environment secret.
 `/news` publishes company announcements and security write-ups. Visitors read
 published posts and like them; only the administrator can create, edit, or
 delete posts.
+
+GitHub Pages serves this project as static files, so News posts, likes, and
+admin sign-in are unavailable on the deployed site. The app still supports
+these features in local development and on a server deployment.
 
 ### Admin sign-in
 
@@ -173,6 +176,7 @@ The dev server runs on <http://localhost:8080>.
 | `npm run dev` | Start the dev server |
 | `npm run build` | Production build (SSR bundle + static assets) |
 | `npm run preview` | Preview the production build |
+| `npm run deploy` | Trigger the GitHub Pages workflow on `main` (requires authenticated GitHub CLI) |
 | `npm run lint` | ESLint + Prettier check |
 | `npm run format` | Format the repository with Prettier |
 | `npm test` | Run the Vitest suite |
@@ -193,55 +197,24 @@ The dev server runs on <http://localhost:8080>.
 
 ## Deployment
 
-This is a **server-rendered** app (TanStack Start + Nitro), so it needs a host
-that can run a server. GitHub Pages cannot host it: Pages only serves static
-files, and this app renders pages per request.
+The site is prerendered to static HTML for GitHub Pages. Every push to `main`
+builds the pages and deploys `.output/public` to
+<https://fikrado2.github.io>. The workflow is defined in
+`.github/workflows/deploy.yml` and requires no Cloudflare credentials.
 
-Deploy to **Cloudflare Workers**, which the build already targets:
-
-```sh
-npm ci
-npm run build
-
-# One-time: create the KV namespace used for posts and likes
-npx wrangler kv namespace create NEWS
-# then paste the returned id into wrangler.json
-
-# One-time: store the admin password as an encrypted secret
-npx wrangler secret put ADMIN_USERNAME   # fikrado
-npx wrangler secret put ADMIN_PASSWORD   # your real password
-# optional, keeps sessions valid across a password change
-npx wrangler secret put ADMIN_SESSION_SECRET
-
-npx wrangler deploy
-```
-
-The password is set with `wrangler secret put`, so it is stored encrypted by
-Cloudflare and is never present in the repository or the deployed bundle.
-
-### GitHub Actions
-
-`.github/workflows/deploy.yml` builds and deploys to Cloudflare Workers on every
-push to `main`. It needs two repository secrets, which you can add under
-**Settings → Secrets and variables → Actions**:
-
-| Secret | Where to get it |
-| --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers" template |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → your account → Account ID |
-
-Once those two secrets exist, every push deploys automatically.
-
-The admin password is **not** a repository secret — it is set on the Worker
-itself so it never passes through GitHub or the build:
+To trigger a deployment manually after the changes are committed and pushed:
 
 ```sh
-npx wrangler secret put ADMIN_USERNAME   # fikrado
-npx wrangler secret put ADMIN_PASSWORD   # your real password
+npm run deploy
 ```
 
-> The previous workflow published to GitHub Pages, which cannot host a
-> server-rendered app. It has been replaced.
+This requires the GitHub CLI to be authenticated with permission to dispatch
+repository workflows. Alternatively, use **Actions → Deploy to GitHub Pages →
+Run workflow** on GitHub.
+
+The static deployment does not run TanStack Start's server or the News API.
+News posts, likes, and administration remain unavailable until the app is
+deployed to a server-capable host.
 
 ---
 

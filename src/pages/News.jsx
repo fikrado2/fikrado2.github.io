@@ -31,6 +31,7 @@ import {
   updatePost as apiUpdatePost,
 } from "../lib/news/session";
 
+const isStaticPages = import.meta.env.VITE_STATIC_PAGES === "true";
 const EMPTY_POSTS = [];
 const EMPTY_LIKES = { counts: {}, demo: false };
 function newId() {
@@ -45,7 +46,7 @@ function formatDate(value) {
 
 export default function News() {
   const [posts, setPosts] = useState(EMPTY_POSTS);
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState(isStaticPages ? "unavailable" : "loading");
   const [error, setError] = useState("");
   const [openId, setOpenId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,11 +69,13 @@ export default function News() {
   }, []);
 
   useEffect(() => {
-    readSession().then((s) => setIsAdmin(Boolean(s?.authenticated)));
+    if (!isStaticPages) {
+      readSession().then((s) => setIsAdmin(Boolean(s?.authenticated)));
+    }
   }, []);
 
   useEffect(() => {
-    void load();
+    if (!isStaticPages) void load();
   }, [load]);
 
   useEffect(() => {
@@ -178,7 +181,9 @@ export default function News() {
             <div className="news-toolbar-meta">
               <Newspaper size={16} aria-hidden="true" />
               <span>
-                {visible.length} {visible.length === 1 ? "post" : "posts"}
+                {isStaticPages
+                  ? "Updates are unavailable on this static site."
+                  : `${visible.length} ${visible.length === 1 ? "post" : "posts"}`}
               </span>
               {posts.some((p) => p.demoLikeCount) ? (
                   <span className="news-demo-tag">Demo like counts</span>
@@ -210,7 +215,7 @@ export default function News() {
                   Logout
                 </button>
               </div>
-            ) : (
+            ) : isStaticPages ? null : (
               <NewsLogin
                 onSignedIn={async () => {
                   setIsAdmin(true);
@@ -231,6 +236,16 @@ export default function News() {
             <div className="news-state glass-card" role="status">
               <Loader2 size={22} className="news-spin" aria-hidden="true" />
               <p>Loading news…</p>
+            </div>
+          ) : null}
+
+          {status === "unavailable" ? (
+            <div className="news-state glass-card" role="status">
+              <Newspaper size={22} aria-hidden="true" />
+              <p>
+                News posts, likes, and administration require a server and are not available on GitHub
+                Pages.
+              </p>
             </div>
           ) : null}
 

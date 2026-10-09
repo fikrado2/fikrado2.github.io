@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "gh workflow run deploy.yml --ref main"
   },
   "overrides": {
     "rolldown": "1.2.1"
