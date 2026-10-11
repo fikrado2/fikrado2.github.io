@@ -1120,3 +1120,22 @@ hqTitle: "\u12e8\u1295\u1295 \u12e9\u12a0\u12ce\u12e8\u12f5",
     },
   },
 };
+
+/**
+ * Languages that actually have a `translations` entry.
+ *
+ * `SUPPORTED_LANGS` is the list shown in the language switcher and returned by
+ * browser/geo detection, and it is intentionally larger: most of those entries
+ * have a name and a flag but no translated copy yet. Anything reading
+ * `translations[lang]` must therefore not assume membership of
+ * `SUPPORTED_LANGS` implies a defined object.
+ */
+export const TRANSLATED_LANGS = Object.keys(translations);
+
+/**
+ * Narrow a detected or stored language to one that has translations.
+ * Falls back to English so an untranslated locale can never blank the page.
+ */
+export function resolveLang(lang) {
+  return typeof lang === "string" && TRANSLATED_LANGS.includes(lang) ? lang : "en";
+}

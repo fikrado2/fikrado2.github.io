@@ -3,6 +3,7 @@ import {
   translations,
   detectLanguage,
   detectLanguageByLocation,
+  resolveLang,
   SUPPORTED_LANGS,
 } from "./translations.js";
 import { readBrowserStorage, writeBrowserStorage } from "../lib/browser-storage.js";
@@ -16,14 +17,14 @@ export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
     if (typeof window === "undefined") return "en";
     const saved = readBrowserStorage("localStorage", STORAGE_KEY);
-    return SUPPORTED_LANGS.includes(saved) ? saved : detectLanguage();
+    return resolveLang(SUPPORTED_LANGS.includes(saved) ? saved : detectLanguage());
   });
   const [showLangPrompt, setShowLangPrompt] = useState(false);
   const [detecting, setDetecting] = useState(true);
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = translations[lang].meta.title;
+    document.title = translations[lang]?.meta?.title ?? translations.en.meta.title;
   }, [lang]);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function LanguageProvider({ children }) {
     const hasVisited = readBrowserStorage("sessionStorage", VISITED_KEY);
 
     if (SUPPORTED_LANGS.includes(saved)) {
-      setLang(saved);
+      setLang(resolveLang(saved));
       setDetecting(false);
       if (!hasVisited) {
         setShowLangPrompt(true);
@@ -46,8 +47,9 @@ export function LanguageProvider({ children }) {
       const geoLang = await detectLanguageByLocation();
       if (cancelled) return;
       if (geoLang && geoLang !== detectLanguage()) {
-        setLang(geoLang);
-        writeBrowserStorage("localStorage", STORAGE_KEY, geoLang);
+        const resolved = resolveLang(geoLang);
+        setLang(resolved);
+        writeBrowserStorage("localStorage", STORAGE_KEY, resolved);
       }
       setDetecting(false);
       if (!hasVisited) {
@@ -62,14 +64,18 @@ export function LanguageProvider({ children }) {
   }, []);
 
   const changeLang = (newLang) => {
-    setLang(newLang);
-    writeBrowserStorage("localStorage", STORAGE_KEY, newLang);
+    // The switcher lists every SUPPORTED_LANG, but only some have a translated
+    // copy. Selecting an untranslated one must fall back to English rather than
+    // leaving `lang` pointing at a missing translations entry.
+    const resolved = resolveLang(newLang);
+    setLang(resolved);
+    writeBrowserStorage("localStorage", STORAGE_KEY, resolved);
     setShowLangPrompt(false);
   };
 
   const dismissPrompt = () => setShowLangPrompt(false);
 
-  const t = translations[lang];
+  const t = translations[lang] ?? translations.en;
 
   return (
     <LanguageContext.Provider
