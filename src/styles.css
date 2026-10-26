@@ -544,7 +544,7 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   height: 70px;
 }
 
@@ -612,7 +612,7 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 .brand-name {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   letter-spacing: 0.06em;
   white-space: nowrap;
   display: inline-flex;
@@ -638,27 +638,35 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 
 .nav-links {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   list-style: none;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-glass);
   border-radius: 999px;
-  padding: 4px;
+  padding: 3px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+/* 8 translated labels (worst case: Somali) do not fit next to the logo and the
+   WhatsApp CTA inside the 1200px container even without any padding, so the
+   desktop pill is text-only. Icons stay in the mobile panel where they are 18px. */
+.nav-links .nav-icon {
+  display: none;
 }
 
 .nav-links a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--muted);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  padding: 8px 14px;
+  padding: 8px 11px;
   border-radius: 999px;
   position: relative;
+  white-space: nowrap;
   transition: color 0.25s ease, background 0.25s ease;
 }
 
@@ -723,7 +731,7 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 9px 18px;
+  padding: 9px 15px;
   border-radius: 999px;
   font-size: 0.83rem;
   font-weight: 700;
@@ -1614,7 +1622,9 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 .footer {
   position: relative;
   z-index: 1;
-  padding: 70px 0 30px;
+  /* Bottom padding keeps the copyright line clear of the fixed language
+     switcher that sits in the bottom-left corner of the viewport. */
+  padding: 70px 0 76px;
   border-top: 1px solid var(--border);
   background: linear-gradient(180deg, var(--footer-bg-top) 0%, var(--footer-bg-bottom) 100%);
   backdrop-filter: blur(16px);
@@ -3430,6 +3440,22 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
 }
 
 /* ---------- RESPONSIVE ---------- */
+/* Nav collapse point: below 1281px the 8 translated links no longer fit between
+   the brand and the WhatsApp CTA, so the pill switches to the mobile panel. */
+@media (max-width: 1280px) {
+  .nav-center {
+    display: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+}
+
 @media (max-width: 1000px) {
   .cards,
   .books-grid,
@@ -3986,7 +4012,9 @@ h1.grad-text, h2.grad-text, .grad-text-glow {
   position: fixed;
   inset: 0;
   z-index: 800;
-  pointer-events: none;
+  /* Must accept pointer events, otherwise the overlay's onClick={close}
+     handler never fires and the modal can only be dismissed from its buttons. */
+  pointer-events: auto;
   background: linear-gradient(135deg, rgba(4, 8, 20, 0.45), rgba(6, 10, 24, 0.5));
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
