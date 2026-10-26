@@ -60,8 +60,8 @@ export default function AnimeBackground() {
         r: 180 + Math.random() * 160,
         color: ORB_COLORS[i % ORB_COLORS.length],
         opacity: 0.12 + Math.random() * 0.08,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
       }));
     }
 
@@ -71,8 +71,8 @@ export default function AnimeBackground() {
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * W,
         y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
+        vx: (Math.random() - 0.5) * 0.55,
+        vy: (Math.random() - 0.5) * 0.55,
         baseSize: 1 + Math.random() * 2.2,
         size: 1 + Math.random() * 2.2,
         opacity: 0.25 + Math.random() * 0.5,
@@ -87,9 +87,9 @@ export default function AnimeBackground() {
       // Breathing — orbs grow/shrink in a gentle loop
       orbAnim = anime({
         targets: orbs,
-        r: (o) => o.baseR * (0.7 + Math.random() * 0.6),
+        r: (o) => o.baseR * (0.6 + Math.random() * 0.8),
         opacity: () => 0.08 + Math.random() * 0.12,
-        duration: () => 4000 + Math.random() * 3000,
+        duration: () => 2800 + Math.random() * 2200,
         delay: anime.stagger(800),
         easing: "easeInOutSine",
         direction: "alternate",
@@ -233,7 +233,7 @@ export default function AnimeBackground() {
       // Pulses
       pulses = pulses.filter((p) => p.opacity > 0.01);
       for (const p of pulses) {
-        p.r += 1.8;
+        p.r += 2.4;
         p.opacity *= 0.985;
         drawPulse(p);
       }
@@ -254,7 +254,7 @@ export default function AnimeBackground() {
         const dy = p.y - mouseY;
         const dist = Math.hypot(dx, dy);
         if (dist < 120 && dist > 0) {
-          const force = (1 - dist / 120) * 0.8;
+          const force = (1 - dist / 120) * 1.4;
           p.x += (dx / dist) * force;
           p.y += (dy / dist) * force;
         }

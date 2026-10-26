@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, CalendarDays, Heart, Newspaper, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Heart, Newspaper, X, Sparkles } from "lucide-react";
 
 import PageHero from "../components/PageHero.jsx";
 import { getPosts, readLocalLikes, toggleLocalLike } from "../lib/news/posts";
@@ -11,21 +11,13 @@ function formatDate(value) {
   return parsed.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 }
 
-/**
- * News is a normal, read-only page on GitHub Pages.
- *
- * Posts come from the committed `src/data/news-posts.json` and are baked into
- * the prerendered HTML; there is no API, no sign-in, and no server-side
- * administration. Likes are stored in this visitor's own browser and are
- * labelled as demo figures, never presented as real readership.
- */
 export default function News() {
   const posts = useMemo(() => getPosts(), []);
   const [openId, setOpenId] = useState(null);
   const [liked, setLiked] = useState({});
+  const [animatingPostId, setAnimatingPostId] = useState(null);
 
-  // Read after hydration so the prerendered markup matches on first paint and
-  // the visitor's own likes apply without a hydration mismatch.
+  // Read after hydration so the prerendered markup matches on first paint
   useEffect(() => {
     setLiked(readLocalLikes());
   }, []);
@@ -40,18 +32,18 @@ export default function News() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openId]);
 
-  const hasDemoCounts = useMemo(() => posts.some((post) => post.demoLikeCount), [posts]);
-
   const active = useMemo(() => posts.find((post) => post.id === openId) ?? null, [posts, openId]);
 
   /**
-   * The number shown on the heart. A visitor's own browser likes are added on
-   * top of the stored count; when the stored count is seeded demo data the UI
-   * labels it as such instead of implying real readership.
+   * The number shown on the heart. Visitor's own likes are added in real-time
+   * and persist in localStorage across sessions.
    */
   const likeCount = (post) => (post.likes ?? 0) + (liked[post.id] ? 1 : 0);
 
-  function handleLike(post) {
+  function handleLike(e, post) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    setAnimatingPostId(post.id);
+    setTimeout(() => setAnimatingPostId(null), 600);
     setLiked((current) => toggleLocalLike(current, post.id));
   }
 
@@ -71,7 +63,10 @@ export default function News() {
               <span>
                 {posts.length} {posts.length === 1 ? "post" : "posts"}
               </span>
-              {hasDemoCounts ? <span className="news-demo-tag">Demo like counts</span> : null}
+              <span className="news-community-tag">
+                <Heart size={12} className="inline-block" fill="#f87171" color="#f87171" />
+                Community Feed
+              </span>
             </div>
           </div>
 
@@ -84,8 +79,17 @@ export default function News() {
             <div className="news-grid">
               {posts.map((post, i) => (
                 <motion.article
-                  className="news-card glass-card"
+                  className="news-card glass-card cursor-pointer"
                   key={post.id}
+                  onClick={() => setOpenId(post.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setOpenId(post.id);
+                    }
+                  }}
                   initial={{ opacity: 0, y: 26 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
@@ -93,7 +97,7 @@ export default function News() {
                 >
                   <div className="news-card-media">
                     {post.imageUrl ? (
-                      <img src={post.imageUrl} alt="" loading="lazy" />
+                      <img src={post.imageUrl} alt={post.title} loading="lazy" />
                     ) : (
                       <div className="news-card-media-fallback" aria-hidden="true">
                         <Newspaper size={26} />
@@ -111,18 +115,29 @@ export default function News() {
                       <button
                         type="button"
                         className="btn btn-ghost news-btn-sm"
-                        onClick={() => setOpenId(post.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenId(post.id);
+                        }}
                       >
                         Read more
                       </button>
                       <button
                         type="button"
-                        className={`news-like${liked[post.id] ? " liked" : ""}`}
-                        onClick={() => handleLike(post)}
+                        className={`news-like${liked[post.id] ? " liked" : ""}${
+                          animatingPostId === post.id ? " like-pop" : ""
+                        }`}
+                        onClick={(e) => handleLike(e, post)}
                         aria-pressed={Boolean(liked[post.id])}
                         aria-label={`Like ${post.title}`}
                       >
-                        <Heart size={15} aria-hidden="true" />
+                        <Heart
+                          size={15}
+                          aria-hidden="true"
+                          fill={liked[post.id] ? "#f87171" : "none"}
+                          color={liked[post.id] ? "#f87171" : "currentColor"}
+                          className={`heart-icon ${animatingPostId === post.id ? "scale-125" : ""}`}
+                        />
                         <span>{likeCount(post).toLocaleString()}</span>
                       </button>
                     </div>
@@ -163,7 +178,11 @@ export default function News() {
               >
                 <X size={20} />
               </button>
-              {active.imageUrl ? <img className="news-modal-media" src={active.imageUrl} alt="" /> : null}
+              {active.imageUrl ? (
+                <div className="news-modal-media-wrap">
+                  <img className="news-modal-media" src={active.imageUrl} alt={active.title} />
+                </div>
+              ) : null}
               <div className="news-modal-body">
                 <span className="news-card-date">
                   <CalendarDays size={13} aria-hidden="true" />
@@ -180,12 +199,19 @@ export default function News() {
                 <div className="news-modal-actions">
                   <button
                     type="button"
-                    className={`news-like${liked[active.id] ? " liked" : ""}`}
-                    onClick={() => handleLike(active)}
+                    className={`news-like${liked[active.id] ? " liked" : ""}${
+                      animatingPostId === active.id ? " like-pop" : ""
+                    }`}
+                    onClick={(e) => handleLike(e, active)}
                     aria-pressed={Boolean(liked[active.id])}
                     aria-label={`Like ${active.title}`}
                   >
-                    <Heart size={16} aria-hidden="true" />
+                    <Heart
+                      size={16}
+                      aria-hidden="true"
+                      fill={liked[active.id] ? "#f87171" : "none"}
+                      color={liked[active.id] ? "#f87171" : "currentColor"}
+                    />
                     <span>{likeCount(active).toLocaleString()}</span>
                   </button>
                   <button
