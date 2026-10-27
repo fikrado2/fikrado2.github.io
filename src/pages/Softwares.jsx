@@ -130,13 +130,17 @@ export default function Softwares() {
                 className="software-icon-wrap"
                 style={{ color: "#34d399", background: "rgba(52, 211, 153, 0.12)" }}
               >
-                <img src="/cli.png" alt="Fikrado CLI" className="software-icon-wrap-img" />
+                <Terminal size={32} strokeWidth={2} />
               </div>
               <h3>CLI Version</h3>
               <p className="software-desc">
                 High-performance command-line security tool built with Node.js. Ideal for
                 developers, sysadmins, and automated CI/CD security pipelines.
               </p>
+
+              <div className="software-screenshot">
+                <img src="/cli.png" alt="Fikrado Security Enterprise CLI command-line tool" />
+              </div>
 
               <div className="software-meta-group">
                 <div className="software-meta-row">
