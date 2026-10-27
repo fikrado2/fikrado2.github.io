@@ -15,6 +15,7 @@ import {
   Terminal,
   Globe2,
   ArrowRight,
+  Download,
   Users,
   Award,
   Code2,
@@ -68,9 +69,7 @@ function TerminalTyping() {
   }, [currentLine, currentChar, lines]);
 
   const displayText =
-    currentLine < lines.length
-      ? lines[currentLine].text.slice(0, currentChar)
-      : "";
+    currentLine < lines.length ? lines[currentLine].text.slice(0, currentChar) : "";
 
   return (
     <div className="hp-deck-screen hp-terminal-body">
@@ -114,15 +113,21 @@ function ThreatRadar() {
       <div className="hp-radar-telemetry">
         <div className="hp-telemetry-row">
           <span className="hp-telemetry-label">RADAR SWEEP:</span>
-          <span className="hp-telemetry-val" style={{ color: "#34d399" }}>360° ACTIVE</span>
+          <span className="hp-telemetry-val" style={{ color: "#34d399" }}>
+            360° ACTIVE
+          </span>
         </div>
         <div className="hp-telemetry-row">
           <span className="hp-telemetry-label">PERIMETER STATUS:</span>
-          <span className="hp-telemetry-val" style={{ color: "#7dd3fc" }}>ZERO INTRUSIONS</span>
+          <span className="hp-telemetry-val" style={{ color: "#7dd3fc" }}>
+            ZERO INTRUSIONS
+          </span>
         </div>
         <div className="hp-telemetry-row">
           <span className="hp-telemetry-label">ENCRYPTION PROTOCOL:</span>
-          <span className="hp-telemetry-val" style={{ color: "#fde047" }}>AES-256-GCM / POST-QUANTUM</span>
+          <span className="hp-telemetry-val" style={{ color: "#fde047" }}>
+            AES-256-GCM / POST-QUANTUM
+          </span>
         </div>
       </div>
     </div>
@@ -157,10 +162,38 @@ function NeuralMatrix() {
           <span>ISOLATION</span>
         </div>
         <svg className="hp-neural-svg" viewBox="0 0 300 200">
-          <line x1="150" y1="100" x2="150" y2="30" stroke="rgba(167,139,250,0.4)" strokeDasharray="4 4" />
-          <line x1="150" y1="100" x2="260" y2="100" stroke="rgba(125,211,252,0.4)" strokeDasharray="4 4" />
-          <line x1="150" y1="100" x2="150" y2="170" stroke="rgba(253,224,71,0.4)" strokeDasharray="4 4" />
-          <line x1="150" y1="100" x2="40" y2="100" stroke="rgba(248,113,113,0.4)" strokeDasharray="4 4" />
+          <line
+            x1="150"
+            y1="100"
+            x2="150"
+            y2="30"
+            stroke="rgba(167,139,250,0.4)"
+            strokeDasharray="4 4"
+          />
+          <line
+            x1="150"
+            y1="100"
+            x2="260"
+            y2="100"
+            stroke="rgba(125,211,252,0.4)"
+            strokeDasharray="4 4"
+          />
+          <line
+            x1="150"
+            y1="100"
+            x2="150"
+            y2="170"
+            stroke="rgba(253,224,71,0.4)"
+            strokeDasharray="4 4"
+          />
+          <line
+            x1="150"
+            y1="100"
+            x2="40"
+            y2="100"
+            stroke="rgba(248,113,113,0.4)"
+            strokeDasharray="4 4"
+          />
         </svg>
       </div>
       <div className="hp-neural-metrics">
@@ -266,7 +299,7 @@ function Counter({ value, suffix = "", duration = 2000 }) {
           setStarted(true);
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.4 },
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
@@ -477,6 +510,28 @@ export default function Home() {
   const { t } = useLanguage();
   const h = t.home;
   const heroRef = useRef(null);
+
+  // Smooth IntersectionObserver scroll reveal (runs once per element)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const elements = document.querySelectorAll(".hp-reveal");
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("hp-revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -488,10 +543,7 @@ export default function Home() {
     <div className="hp">
       {/* ===================== HERO ===================== */}
       <section className="hp-hero" ref={heroRef}>
-        <motion.div
-          className="container hp-hero-inner"
-          style={{ opacity: heroOpacity, y: heroY }}
-        >
+        <motion.div className="container hp-hero-inner" style={{ opacity: heroOpacity, y: heroY }}>
           {/* Left Column: Copy & Actions */}
           <motion.div
             className="hp-hero-copy"
@@ -514,15 +566,37 @@ export default function Home() {
             <p className="hp-hero-sub">{h.subtitle}</p>
 
             <div className="hp-hero-actions">
-              <Link className="hp-btn hp-btn-primary" to="/courses">
-                <GraduationCap size={18} strokeWidth={2.4} />
-                <span>{h.cta2}</span>
-                <ArrowRight size={16} className="hp-btn-arrow" />
-              </Link>
-              <Link className="hp-btn hp-btn-ghost" to="/services">
-                <ShieldCheck size={18} strokeWidth={2.2} />
-                <span>{h.cta1}</span>
-              </Link>
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.38 }}
+              >
+                <Link className="hp-btn hp-btn-glowing" to="/softwares#download">
+                  <Download size={18} strokeWidth={2.4} />
+                  <span>Download Latest Version 2.6.87</span>
+                </Link>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.48 }}
+              >
+                <Link className="hp-btn hp-btn-primary" to="/courses">
+                  <GraduationCap size={18} strokeWidth={2.4} />
+                  <span>{h.cta2}</span>
+                  <ArrowRight size={16} className="hp-btn-arrow" />
+                </Link>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.58 }}
+              >
+                <Link className="hp-btn hp-btn-ghost" to="/services">
+                  <ShieldCheck size={18} strokeWidth={2.2} />
+                  <span>{h.cta1}</span>
+                </Link>
+              </motion.div>
             </div>
 
             <div className="hp-hero-meta-bar">
@@ -557,7 +631,10 @@ export default function Home() {
 
             {/* Floating 3D Holographic Badges (staggered depth) */}
             <div className="hp-floating-chip hp-chip-ai glass-card">
-              <div className="hp-chip-icon" style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa" }}>
+              <div
+                className="hp-chip-icon"
+                style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa" }}
+              >
                 <BrainCircuit size={20} />
               </div>
               <div className="hp-chip-text">
@@ -568,7 +645,10 @@ export default function Home() {
             </div>
 
             <div className="hp-floating-chip hp-chip-shield glass-card">
-              <div className="hp-chip-icon" style={{ background: "rgba(52,211,153,0.15)", color: "#34d399" }}>
+              <div
+                className="hp-chip-icon"
+                style={{ background: "rgba(52,211,153,0.15)", color: "#34d399" }}
+              >
                 <ShieldCheck size={20} />
               </div>
               <div className="hp-chip-text">
@@ -692,15 +772,19 @@ export default function Home() {
 
             <div className="hp-ceo-copy">
               <span className="eyebrow">
-                <ShieldCheck size={14} color="#fde047" style={{ display: "inline", marginRight: 6 }} />
+                <ShieldCheck
+                  size={14}
+                  color="#fde047"
+                  style={{ display: "inline", marginRight: 6 }}
+                />
                 Meet the CEO &amp; Founder
               </span>
               <h2>Mr. Yahye Abdirahman Dahir</h2>
               <p className="hp-ceo-lead">The #1 ethical hacker in East Africa</p>
               <p className="hp-ceo-bio">
-                Mr. Yahye is the genius behind FIKRADO Security — a skilled ethical hacker
-                with 15 years of battle-tested security experience, industry certifications,
-                and an unwavering mission to empower the next generation.
+                Mr. Yahye is the genius behind FIKRADO Security — a skilled ethical hacker with 15
+                years of battle-tested security experience, industry certifications, and an
+                unwavering mission to empower the next generation.
               </p>
 
               {/* Founder Credibility Matrix */}
@@ -720,7 +804,8 @@ export default function Home() {
               </div>
 
               <div className="hp-ceo-quote">
-                &ldquo;Securing digital infrastructure isn&apos;t just technology — it&apos;s the foundation of freedom and innovation for our region.&rdquo;
+                &ldquo;Securing digital infrastructure isn&apos;t just technology — it&apos;s the
+                foundation of freedom and innovation for our region.&rdquo;
               </div>
             </div>
           </motion.div>
@@ -745,8 +830,8 @@ export default function Home() {
               <span className="grad-text">Internationally Certified &amp; Trusted</span>
             </h2>
             <p>
-              Our team holds industry-leading certifications — ensuring the highest standard
-              of security expertise for every client we serve.
+              Our team holds industry-leading certifications — ensuring the highest standard of
+              security expertise for every client we serve.
             </p>
           </motion.div>
 
@@ -762,7 +847,9 @@ export default function Home() {
               >
                 <div
                   className="hp-cert-top-bar"
-                  style={{ background: `linear-gradient(90deg, transparent, ${cert.color}, transparent)` }}
+                  style={{
+                    background: `linear-gradient(90deg, transparent, ${cert.color}, transparent)`,
+                  }}
                 />
                 <div
                   className="hp-cert-badge"
@@ -800,11 +887,17 @@ export default function Home() {
               >
                 <div
                   className="hp-stat-accent-bar"
-                  style={{ background: `linear-gradient(90deg, transparent, ${s.color}, transparent)` }}
+                  style={{
+                    background: `linear-gradient(90deg, transparent, ${s.color}, transparent)`,
+                  }}
                 />
                 <div
                   className="hp-stat-icon-wrap"
-                  style={{ color: s.color, background: `${s.color}15`, borderColor: `${s.color}35` }}
+                  style={{
+                    color: s.color,
+                    background: `${s.color}15`,
+                    borderColor: `${s.color}35`,
+                  }}
                 >
                   <s.icon size={26} strokeWidth={2} />
                 </div>
@@ -837,8 +930,8 @@ export default function Home() {
               <span className="grad-text">Two Missions, One Vision</span>
             </h2>
             <p>
-              We protect organizations from digital threats while building a generation of
-              skilled technologists through accessible, practical education.
+              We protect organizations from digital threats while building a generation of skilled
+              technologists through accessible, practical education.
             </p>
           </motion.div>
 
@@ -902,14 +995,14 @@ export default function Home() {
                 <span className="grad-text">Next Generation</span>
               </h2>
               <p className="hp-ai-desc">
-                We believe artificial intelligence shouldn&apos;t be locked behind paywalls or
-                elite universities. That&apos;s why we&apos;re bringing hands-on AI education to youth
+                We believe artificial intelligence shouldn&apos;t be locked behind paywalls or elite
+                universities. That&apos;s why we&apos;re bringing hands-on AI education to youth
                 across East Africa — completely free for those who need it.
               </p>
               <p className="hp-ai-desc">
-                From Python programming to machine learning and AI-powered cybersecurity,
-                our students don&apos;t just learn theory — they build real projects that solve
-                real problems in their communities.
+                From Python programming to machine learning and AI-powered cybersecurity, our
+                students don&apos;t just learn theory — they build real projects that solve real
+                problems in their communities.
               </p>
 
               <div className="hp-ai-perks">
@@ -947,7 +1040,11 @@ export default function Home() {
                 >
                   <span
                     className="hp-ai-feature-icon"
-                    style={{ color: f.color, background: `${f.color}15`, borderColor: `${f.color}35` }}
+                    style={{
+                      color: f.color,
+                      background: `${f.color}15`,
+                      borderColor: `${f.color}35`,
+                    }}
                   >
                     <f.icon size={22} strokeWidth={2} />
                   </span>
@@ -985,8 +1082,8 @@ export default function Home() {
               <span className="grad-text">Professional Security Services</span>
             </h2>
             <p>
-              High-quality security solutions for individuals, businesses, and institutions —
-              backed by certified experts and AI-powered tools.
+              High-quality security solutions for individuals, businesses, and institutions — backed
+              by certified experts and AI-powered tools.
             </p>
           </motion.div>
 
@@ -1003,11 +1100,18 @@ export default function Home() {
                 <div className="hp-security-head">
                   <span
                     className="hp-security-icon"
-                    style={{ color: f.color, background: `${f.color}15`, borderColor: `${f.color}35` }}
+                    style={{
+                      color: f.color,
+                      background: `${f.color}15`,
+                      borderColor: `${f.color}35`,
+                    }}
                   >
                     <f.icon size={24} strokeWidth={2} />
                   </span>
-                  <span className="hp-sec-pill" style={{ color: f.color, borderColor: `${f.color}40` }}>
+                  <span
+                    className="hp-sec-pill"
+                    style={{ color: f.color, borderColor: `${f.color}40` }}
+                  >
                     {f.badge}
                   </span>
                 </div>

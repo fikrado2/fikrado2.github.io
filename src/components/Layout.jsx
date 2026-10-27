@@ -12,6 +12,7 @@ const ROUTE_VARIANTS = {
   "/": "home",
   "/about": "about",
   "/services": "services",
+  "/softwares": "services",
   "/courses": "courses",
   "/books": "books",
   "/videos": "videos",
@@ -58,9 +59,7 @@ export default function Layout({ children }) {
         <div className="bg-vignette" />
       </div>
       <Navbar />
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
       <Footer />
       <LanguageSwitcher />
     </>

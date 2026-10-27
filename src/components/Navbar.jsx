@@ -5,6 +5,7 @@ import {
   Home,
   Info,
   Shield,
+  Cpu,
   BookOpen,
   Video,
   Mail,
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { key: "home", to: "/", icon: Home },
   { key: "about", to: "/about", icon: Info },
   { key: "services", to: "/services", icon: Shield },
+  { key: "softwares", to: "/softwares", icon: Cpu },
   { key: "courses", to: "/courses", icon: GraduationCap },
   { key: "books", to: "/books", icon: BookOpen },
   { key: "videos", to: "/videos", icon: Video },
@@ -31,7 +33,7 @@ const NAV_ITEMS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { t, lang, setLang, languages } = useLanguage();
+  const { t, lang } = useLanguage();
   const location = useLocation();
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="container nav-inner">
-        <Link className="brand" to="/">
+        <Link className="brand" to="/" onClick={() => setOpen(false)}>
           <Logo />
           <span className="brand-name">
             <span className="brand-fikrado">FIKRADO</span>
@@ -66,6 +68,7 @@ export default function Navbar() {
           <ul className={`nav-links ${open ? "open" : ""}`}>
             {NAV_ITEMS.map((l) => {
               const Icon = l.icon;
+              const label = t.nav[l.key] || (l.key === "softwares" ? "Softwares" : l.key);
               return (
                 <li key={l.to}>
                   <NavLink
@@ -74,7 +77,7 @@ export default function Navbar() {
                     end={l.to === "/"}
                   >
                     <Icon size={15} strokeWidth={2} className="nav-icon" />
-                    {t.nav[l.key]}
+                    {label}
                   </NavLink>
                 </li>
               );
@@ -99,11 +102,23 @@ export default function Navbar() {
           >
             <AnimatePresence mode="wait">
               {open ? (
-                <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <motion.span
+                  key="x"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <X size={22} />
                 </motion.span>
               ) : (
-                <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <Menu size={22} />
                 </motion.span>
               )}
@@ -125,16 +140,22 @@ export default function Navbar() {
               <ul className="nav-mobile-links">
                 {NAV_ITEMS.map((l, i) => {
                   const Icon = l.icon;
+                  const label = t.nav[l.key] || (l.key === "softwares" ? "Softwares" : l.key);
                   return (
                     <motion.li
                       key={l.to}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.06 }}
+                      transition={{ delay: i * 0.05 }}
                     >
-                      <NavLink to={l.to} end={l.to === "/"} className={({ isActive }) => (isActive ? "active" : "")}>
+                      <NavLink
+                        to={l.to}
+                        end={l.to === "/"}
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                        onClick={() => setOpen(false)}
+                      >
                         <Icon size={18} strokeWidth={2} />
-                        {t.nav[l.key]}
+                        {label}
                       </NavLink>
                     </motion.li>
                   );

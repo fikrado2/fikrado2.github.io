@@ -1,6 +1,21 @@
 import { Link } from "../compat/react-router-dom.jsx";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Shield, BookOpen, Video, GraduationCap, Home, Info, Award, BadgeCheck, MessageCircle, Newspaper } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Shield,
+  Cpu,
+  BookOpen,
+  Video,
+  GraduationCap,
+  Home,
+  Info,
+  Award,
+  BadgeCheck,
+  MessageCircle,
+  Newspaper,
+} from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext.jsx";
 import Logo from "./Logo.jsx";
 
@@ -8,6 +23,7 @@ const FOOTER_NAV = [
   { key: "home", to: "/", icon: Home },
   { key: "about", to: "/about", icon: Info },
   { key: "services", to: "/services", icon: Shield },
+  { key: "softwares", to: "/softwares", icon: Cpu },
   { key: "courses", to: "/courses", icon: GraduationCap },
   { key: "books", to: "/books", icon: BookOpen },
   { key: "videos", to: "/videos", icon: Video },
@@ -133,7 +149,7 @@ export default function Footer() {
                   <li key={l.to}>
                     <Link to={l.to}>
                       <Icon size={14} strokeWidth={2} />
-                      {t.nav[l.key]}
+                      {t.nav[l.key] || (l.key === "softwares" ? "Softwares" : l.key)}
                     </Link>
                   </li>
                 );
@@ -145,11 +161,7 @@ export default function Footer() {
             <h4>{t.footer.contactUs}</h4>
             {contactLines.map((c, i) => {
               const Icon = c.icon;
-              const content = c.href ? (
-                <a href={c.href}>{c.text}</a>
-              ) : (
-                <span>{c.text}</span>
-              );
+              const content = c.href ? <a href={c.href}>{c.text}</a> : <span>{c.text}</span>;
               return (
                 <p key={i} className="footer-contact-row">
                   <Icon size={14} strokeWidth={2} className="footer-contact-icon" />
@@ -182,7 +194,9 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <span>&copy; {year} FIKRADO Security. {t.footer.rights}</span>
+          <span>
+            &copy; {year} FIKRADO Security. {t.footer.rights}
+          </span>
           <div className="footer-powered">
             Powered by
             <Logo size={20} />

@@ -27,7 +27,10 @@ function NotFoundComponent() {
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
-          <Link to="/" className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium"
+          >
             Go home
           </Link>
         </div>
@@ -54,7 +57,12 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    if (reloadOnceForStaleModule(String((error as { message?: string } | undefined)?.message ?? error))) return;
+    if (
+      reloadOnceForStaleModule(
+        String((error as { message?: string } | undefined)?.message ?? error),
+      )
+    )
+      return;
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
@@ -75,7 +83,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           >
             Try again
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium">
+          <a
+            href="/"
+            className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium"
+          >
             Go home
           </a>
         </div>
@@ -121,8 +132,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           email: "fikrado1@gmail.com",
           telephone: ["+252634048063", "+251984858498"],
           address: [
-            { "@type": "PostalAddress", streetAddress: "Masala", addressLocality: "Hargeisa", addressCountry: "SO" },
-            { "@type": "PostalAddress", streetAddress: "10th Kabele", addressLocality: "Jijiga", addressCountry: "ET" },
+            {
+              "@type": "PostalAddress",
+              streetAddress: "Masala",
+              addressLocality: "Hargeisa",
+              addressCountry: "SO",
+            },
+            {
+              "@type": "PostalAddress",
+              streetAddress: "10th Kabele",
+              addressLocality: "Jijiga",
+              addressCountry: "ET",
+            },
           ],
           areaServed: ["Somaliland", "Ethiopia", "Horn of Africa"],
           sameAs: [
@@ -169,66 +190,6 @@ function RootComponent() {
     return () => {
       window.removeEventListener("vite:preloadError", onPreload);
       window.removeEventListener("unhandledrejection", onRejection);
-    };
-  }, []);
-
-  // 3D Card Tilt Effect - Client-side only
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
-
-    const cards = document.querySelectorAll<HTMLElement>(
-      ".glass-card:not(.no-3d):not(.hp-cta):not(.cta-band):not(.books-partnership-card):not(.hp-ceo-card):not(.contact-form)"
-    );
-    
-    if (cards.length === 0) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * 3; // max 3deg
-        const rotateY = ((centerX - x) / centerX) * 3; // max 3deg
-
-        card.style.transform = `
-          perspective(1000px)
-          rotateX(${rotateX}deg)
-          rotateY(${rotateY}deg)
-          translateY(-8px)
-          scale(1.015)
-        `;
-      });
-    };
-
-    const handleMouseLeave = () => {
-      cards.forEach((card) => {
-        card.style.transform = "";
-        card.style.transition = "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)";
-      });
-    };
-
-    const handleMouseEnter = (e: MouseEvent) => {
-      const card = e.currentTarget as HTMLElement;
-      card.style.transition = "transform 0.1s cubic-bezier(0.16, 1, 0.3, 1)";
-    };
-
-    cards.forEach((card) => {
-      card.addEventListener("mousemove", handleMouseMove);
-      card.addEventListener("mouseleave", handleMouseLeave);
-      card.addEventListener("mouseenter", handleMouseEnter);
-    });
-
-    return () => {
-      cards.forEach((card) => {
-        card.removeEventListener("mousemove", handleMouseMove);
-        card.removeEventListener("mouseleave", handleMouseLeave);
-        card.removeEventListener("mouseenter", handleMouseEnter);
-      });
     };
   }, []);
 

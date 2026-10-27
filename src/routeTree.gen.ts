@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SoftwaresRouteImport } from './routes/softwares'
 import { Route as VideosRouteImport } from './routes/videos'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SoftwaresRoute = SoftwaresRouteImport.update({
+  id: '/softwares',
+  path: '/softwares',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VideosRoute = VideosRouteImport.update({
   id: '/videos',
   path: '/videos',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/courses': typeof CoursesRoute
   '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
+  '/softwares': typeof SoftwaresRoute
   '/videos': typeof VideosRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/courses': typeof CoursesRoute
   '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
+  '/softwares': typeof SoftwaresRoute
   '/videos': typeof VideosRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/courses': typeof CoursesRoute
   '/news': typeof NewsRoute
   '/services': typeof ServicesRoute
+  '/softwares': typeof SoftwaresRoute
   '/videos': typeof VideosRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/news'
     | '/services'
+    | '/softwares'
     | '/videos'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/news'
     | '/services'
+    | '/softwares'
     | '/videos'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/news'
     | '/services'
+    | '/softwares'
     | '/videos'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   CoursesRoute: typeof CoursesRoute
   NewsRoute: typeof NewsRoute
   ServicesRoute: typeof ServicesRoute
+  SoftwaresRoute: typeof SoftwaresRoute
   VideosRoute: typeof VideosRoute
 }
 
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/softwares': {
+      id: '/softwares'
+      path: '/softwares'
+      fullPath: '/softwares'
+      preLoaderRoute: typeof SoftwaresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/videos': {
       id: '/videos'
       path: '/videos'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesRoute: CoursesRoute,
   NewsRoute: NewsRoute,
   ServicesRoute: ServicesRoute,
+  SoftwaresRoute: SoftwaresRoute,
   VideosRoute: VideosRoute,
 }
 export const routeTree = rootRouteImport

@@ -20,6 +20,13 @@ const PAGE_META = {
     keywords:
       "about FIKRADO Security, cybersecurity company, non-profit security, Hargeisa, Jijiga, Horn of Africa, security mission, certified team, ISO 27001, OSCP, CCNA",
   },
+  "/softwares": {
+    title: "Fikrado Security Enterprise | AI-Powered Security Software",
+    description:
+      "Fikrado Security Enterprise detects malware and scans systems for vulnerabilities. Available in CLI (Node.js) and Desktop App (Windows, Linux, macOS).",
+    keywords:
+      "Fikrado Security Enterprise, security software, malware detection, vulnerability scanner, CLI security tool, desktop security app, Horn of Africa",
+  },
   "/services": {
     title: "Cybersecurity Services | Penetration Testing & Network Defense",
     description:
@@ -74,42 +81,69 @@ const COURSE_JSONLD = {
       name: "Cybersecurity Essentials",
       description:
         "A plain-language introduction to threats, defenses, and how the internet stays secure.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Linux Fundamentals",
       description: "Master the command line, file system, and administration that power modern IT.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Networking & Infrastructure",
-      description: "Understand TCP/IP, routing, and network services behind every connected system.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      description:
+        "Understand TCP/IP, routing, and network services behind every connected system.",
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Ethical Hacking",
-      description: "Learn how attackers think so you can defend better — with legal, responsible techniques.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      description:
+        "Learn how attackers think so you can defend better — with legal, responsible techniques.",
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Web Application Security",
       description: "Find and fix OWASP top 10 vulnerabilities in real web applications.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
     {
       "@type": "Course",
       name: "Digital Literacy",
-      description: "Accessible technology and online-safety education for students and communities.",
-      provider: { "@type": "Organization", name: "FIKRADO Security", sameAs: "https://fikrado2.github.io/" },
+      description:
+        "Accessible technology and online-safety education for students and communities.",
+      provider: {
+        "@type": "Organization",
+        name: "FIKRADO Security",
+        sameAs: "https://fikrado2.github.io/",
+      },
       offers: { "@type": "Offer", price: "18", priceCurrency: "USD" },
     },
   ],
@@ -130,7 +164,10 @@ const SERVICE_JSONLD = {
     name: "Security Services",
     itemListElement: [
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Penetration Testing" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Security Awareness Training" } },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Security Awareness Training" },
+      },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Network Defense" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Incident Response" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Data Protection" } },

@@ -19,6 +19,7 @@ export default defineConfig({
       { path: "/courses" },
       { path: "/news" },
       { path: "/services" },
+      { path: "/softwares" },
       { path: "/videos" },
     ],
     prerender: {
