@@ -130,7 +130,7 @@ export default function Softwares() {
                 className="software-icon-wrap"
                 style={{ color: "#34d399", background: "rgba(52, 211, 153, 0.12)" }}
               >
-                <Terminal size={32} strokeWidth={2} />
+                <img src="/cli.png" alt="Fikrado CLI" className="software-icon-wrap-img" />
               </div>
               <h3>CLI Version</h3>
               <p className="software-desc">
@@ -150,7 +150,7 @@ export default function Softwares() {
                       <WindowsIcon size={15} /> Windows
                     </span>
                     <span className="platform-tag" title="Linux">
-                      <LinuxIcon size={15} /> Linux
+                      <img src="/linux.png" alt="Linux" /> Linux
                     </span>
                     <span className="platform-tag" title="macOS">
                       <AppleIcon size={15} /> macOS
@@ -213,7 +213,7 @@ export default function Softwares() {
                       <WindowsIcon size={15} /> Windows
                     </span>
                     <span className="platform-tag" title="Linux">
-                      <LinuxIcon size={15} /> Linux
+                      <img src="/linux.png" alt="Linux" /> Linux
                     </span>
                     <span className="platform-tag" title="macOS">
                       <AppleIcon size={15} /> macOS
