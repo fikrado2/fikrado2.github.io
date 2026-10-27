@@ -5313,6 +5313,23 @@ h2.grad-text,
   color: var(--muted);
 }
 
+.software-screenshot {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  background: var(--panel-glass);
+  line-height: 0;
+}
+
+.software-screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
 /* Software Core Features (What It Does) */
 .software-features-grid {
   display: grid;

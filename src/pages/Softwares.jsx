@@ -38,7 +38,20 @@ function AppleIcon({ size = 18 }) {
 function LinuxIcon({ size = 18 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12.012 0C9.354 0 7.827 1.464 7.643 3.992c-.085 1.157.172 2.516.489 3.51-.555.772-1.285 1.83-1.637 2.784-.575 1.56-.632 3.14-.143 4.545.457 1.31 1.439 2.228 2.628 2.634.331.113.67.18.995.215-.224.786-.289 1.638-.17 2.48.167 1.18.666 2.096 1.444 2.651.78.556 1.79.805 2.91.737 1.122-.068 2.213-.45 3.076-1.122.862-.672 1.428-1.637 1.589-2.82.115-.845.051-1.697-.173-2.48.325-.035.664-.102.995-.215 1.189-.406 2.171-1.324 2.628-2.634.489-1.405.432-2.985-.143-4.545-.352-.954-1.082-2.012-1.637-2.784.317-.994.574-2.353.489-3.51C20.197 1.464 18.67 0 16.012 0h-4z" />
+      {/* body (egg) */}
+      <ellipse cx="12" cy="13.5" rx="8" ry="6.8" />
+      {/* head */}
+      <ellipse cx="12" cy="6.6" rx="4.6" ry="4.2" />
+      {/* crest (tuft on top of head) */}
+      <path d="M10.3 2.7 L13.5 2.7 L12 0.9 Z" />
+      {/* beak */}
+      <path d="M11.1 8.9 L13.8 10.5 L10.2 10.5 Z" />
+      {/* eyes */}
+      <circle cx="10.9" cy="6.3" r="0.42" />
+      <circle cx="13.2" cy="6.3" r="0.42" />
+      {/* feet */}
+      <ellipse cx="7.6" cy="19.4" rx="2.1" ry="1.2" />
+      <ellipse cx="16.4" cy="19.4" rx="2.1" ry="1.2" />
     </svg>
   );
 }
@@ -180,11 +193,15 @@ export default function Softwares() {
               </div>
               <h3>Desktop App</h3>
               <p className="software-desc">
-                Comprehensive graphical application with an interactive dashboard, live system
-                vulnerability scans, and real-time malware alerts.
-              </p>
+                              Comprehensive graphical application with an interactive dashboard, live system
+                              vulnerability scans, and real-time malware alerts.
+                            </p>
 
-              <div className="software-meta-group">
+                            <div className="software-screenshot">
+                              <img src="/screenshot-desktop-app.png" alt="Fikrado Security Enterprise desktop app" />
+                            </div>
+
+                            <div className="software-meta-group">
                 <div className="software-meta-row">
                   <span className="meta-label">Architecture:</span>
                   <span className="meta-value">Native Desktop GUI</span>
