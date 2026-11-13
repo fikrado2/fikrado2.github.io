@@ -339,6 +339,36 @@ h2.grad-text,
     transition: none !important;
     transform: none !important;
   }
+  .bg-grid {
+    animation: none !important;
+  }
+}
+
+@media (pointer: coarse) {
+  .glass-card,
+  .card,
+  .service-card,
+  .course-card,
+  .book-cover-card,
+  .books-partnership-card,
+  .value,
+  .office,
+  .cert-card,
+  .hp-feature-card,
+  .hp-ai-feature,
+  .hp-security-card,
+  .hp-stat-card,
+  .hp-cert-card,
+  .hp-ceo-card,
+  .hp-cta,
+  .cta-band,
+  .mission-box,
+  .hq-photo,
+  .contact-card,
+  .contact-info,
+  .news-state {
+    will-change: auto;
+  }
 }
 
 /* ===========================================================
@@ -904,7 +934,10 @@ h2.grad-text,
   display: block;
   width: 100%;
   height: auto;
-  max-height: 440px;
+  max-height: 280px;
+  max-width: 640px;
+  margin: 0 auto;
+  border-radius: 16px;
   object-fit: cover;
   object-position: center;
 }
@@ -1119,6 +1152,8 @@ h2.grad-text,
   align-items: center;
   justify-content: center;
   padding: 10px;
+  max-width: 240px;
+  margin: 0 auto;
 }
 
 .book-cover {
@@ -1378,8 +1413,10 @@ h2.grad-text,
   border: 1px solid var(--border-glass);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
   aspect-ratio: 16 / 9;
-  max-height: 520px;
+  max-height: 320px;
+  max-width: 560px;
   width: 100%;
+  margin: 0 auto;
   background: #060a12;
 }
 

@@ -28,20 +28,21 @@ const CARD_SELECTOR = [
   ".news-state",
 ].join(", ");
 
-/**
- * CardTiltManager — global delegated 3D tilt engine.
- *
- * Automatically attaches interactive 3D tilt and specular lighting
- * to every card on every page without requiring manual per-card setup
- * or re-binding across client-side page transitions.
- */
 export default function CardTiltManager() {
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const prefersReducedMotion = () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const isCoarsePointer = () =>
+      window.matchMedia("(pointer: coarse)").matches;
+
+    if (prefersReducedMotion() || isCoarsePointer()) return;
 
     let activeCard = null;
     let rafId = null;
+    let resetTimeoutId = null;
     let targetTiltX = 0;
     let targetTiltY = 0;
     let currentTiltX = 0;
@@ -51,11 +52,13 @@ export default function CardTiltManager() {
 
     const resetCard = (card) => {
       if (!card) return;
+      if (resetTimeoutId) clearTimeout(resetTimeoutId);
       card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale3d(1, 1, 1)";
       card.style.setProperty("--glare-opacity", "0");
       card.classList.remove("card-3d-active");
       card.classList.add("card-3d-leaving");
-      setTimeout(() => {
+      resetTimeoutId = setTimeout(() => {
+        resetTimeoutId = null;
         if (card && !card.classList.contains("card-3d-active")) {
           card.classList.remove("card-3d-leaving");
           card.style.transform = "";
@@ -77,7 +80,15 @@ export default function CardTiltManager() {
     };
 
     const onPointerMove = (e) => {
-      // Disable 3D tilt on the contact page
+      if (e.pointerType === "touch" || prefersReducedMotion() || isCoarsePointer()) {
+        if (activeCard) {
+          resetCard(activeCard);
+          activeCard = null;
+          if (rafId) cancelAnimationFrame(rafId);
+        }
+        return;
+      }
+
       if (window.location.pathname.includes('/contact')) {
         if (activeCard) {
           resetCard(activeCard);
@@ -112,10 +123,9 @@ export default function CardTiltManager() {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const px = (x / rect.width - 0.5) * 2; // -1 to 1
-      const py = (y / rect.height - 0.5) * 2; // -1 to 1
+      const px = (x / rect.width - 0.5) * 2;
+      const py = (y / rect.height - 0.5) * 2;
 
-      // Tilt angles (responsive, max 9.5 degrees)
       targetTiltX = -py * 9.5;
       targetTiltY = px * 9.5;
 
@@ -140,7 +150,12 @@ export default function CardTiltManager() {
       window.removeEventListener("pointerleave", onPointerLeave);
       window.removeEventListener("blur", onPointerLeave);
       if (rafId) cancelAnimationFrame(rafId);
-      if (activeCard) resetCard(activeCard);
+      if (resetTimeoutId) clearTimeout(resetTimeoutId);
+      if (activeCard) {
+        activeCard.style.transform = "";
+        activeCard.style.setProperty("--glare-opacity", "0");
+        activeCard.classList.remove("card-3d-active", "card-3d-leaving");
+      }
     };
   }, []);
 
