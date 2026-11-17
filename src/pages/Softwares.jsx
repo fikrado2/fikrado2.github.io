@@ -21,7 +21,9 @@ const USSD_CODE = "*880*0634048063*8#";
 const USSD_TEL = `tel:*880*0634048063*8%23`;
 
 const PLANS = [
-  { name: "Single", price: 20, period: "/ month" },
+  { name: "Single", price: 20, period: "/ month", tagline: "For individual security professionals and single systems", features: ["Full access to CLI & Desktop App", "Real-time malware detection", "System vulnerability scanning", "AI-driven analysis updates"] },
+  { name: "Enterprise", price: 4000, period: "/ year", tagline: "Recommended for teams and growing organizations", features: ["Everything in Single, plus:", "Up to 50 licensed seats", "Centralized management dashboard", "Priority vulnerability reports", "Dedicated account manager"] },
+  { name: "Extra Support", price: 90, period: "/ session", tagline: "Add-on option for expert-guided assistance", features: ["1-on-1 expert session (60 min)", "Custom scan configuration", "Threat remediation walkthrough", "Best-practice hardening guide"] },
 ];
 
 const DISCOUNT_TIERS = [10, 20, 30, 40, 50];
@@ -67,9 +69,8 @@ function LinuxIcon({ size = 18 }) {
 
 export default function Softwares() {
   const discountPercent = getDailyDiscount();
-  const plan = PLANS[0];
-  const discountedPrice = (plan.price * (100 - discountPercent) / 100).toFixed(2);
   const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  const getDiscountedPrice = (price) => (price * (100 - discountPercent) / 100).toFixed(2);
 
   return (
     <>
@@ -338,60 +339,51 @@ export default function Softwares() {
               <span className="grad-text">License Plans</span>
             </h2>
             <p style={{ color: "var(--muted)", maxWidth: 600, margin: "12px auto 0" }}>
-              Predictable pricing for individual security professionals.
+              Predictable pricing for individuals, teams, and expert support.
             </p>
           </div>
 
           <div className="software-pricing-grid">
-            <motion.div
-              className="pricing-card glass-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="pricing-header">
-                <h3>Single</h3>
-                <p className="pricing-tagline">
-                  For individual security professionals and single systems
-                </p>
-              </div>
+            {PLANS.map((plan, i) => (
+              <motion.div
+                key={plan.name}
+                className="pricing-card glass-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+              >
+                <div className="pricing-header">
+                  <h3>{plan.name}</h3>
+                  <p className="pricing-tagline">{plan.tagline}</p>
+                </div>
 
-              <div className="pricing-price-wrap pricing-price-inline">
-                <span className="pricing-currency">$</span>
-                <span className="pricing-amount">{discountedPrice}</span>
-                <span className="pricing-period">{plan.period}</span>
-                <span className="pricing-original">$ {plan.price}{plan.period}</span>
-              </div>
+                <div className="pricing-price-wrap pricing-price-inline">
+                  <span className="pricing-currency">$</span>
+                  <span className="pricing-amount">{getDiscountedPrice(plan.price)}</span>
+                  <span className="pricing-period">{plan.period}</span>
+                  <span className="pricing-original">$ {plan.price}{plan.period}</span>
+                </div>
 
-              <div className="pricing-discount-badge">
-                <Tag size={14} />
-                <span>{discountPercent}% OFF today — {today}</span>
-              </div>
+                <div className="pricing-discount-badge">
+                  <Tag size={14} />
+                  <span>{discountPercent}% OFF today — {today}</span>
+                </div>
 
-              <ul className="pricing-features">
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>Full access to CLI &amp; Desktop App</span>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>Real-time malware detection</span>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>System vulnerability scanning</span>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>AI-driven analysis updates</span>
-                </li>
-              </ul>
-              <Link to="/contact" className="hp-btn hp-btn-ghost pricing-btn">
-                <span>Get Single License</span>
-                <ArrowRight size={16} />
-              </Link>
-            </motion.div>
+                <ul className="pricing-features">
+                  {plan.features.map((feat) => (
+                    <li key={feat}>
+                      <Check size={16} color="#34d399" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/contact" className="hp-btn hp-btn-ghost pricing-btn">
+                  <span>Get {plan.name} License</span>
+                  <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
