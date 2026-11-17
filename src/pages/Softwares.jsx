@@ -17,9 +17,6 @@ import {
 import { Link } from "../compat/react-router-dom.jsx";
 import PageHero from "../components/PageHero.jsx";
 
-const USSD_CODE = "*880*0634048063*8#";
-const USSD_TEL = `tel:*880*0634048063*8%23`;
-
 const PLANS = [
   { name: "Single", price: 20, period: "/ month", tagline: "For individual security professionals and single systems", features: ["Full access to CLI & Desktop App", "Real-time malware detection", "System vulnerability scanning", "AI-driven analysis updates"] },
   { name: "Enterprise", price: 4000, period: "/ year", tagline: "Recommended for teams and growing organizations", features: ["Everything in Single, plus:", "Up to 50 licensed seats", "Centralized management dashboard", "Priority vulnerability reports", "Dedicated account manager"] },
@@ -385,37 +382,6 @@ export default function Softwares() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ===================== MOBILE MONEY PAY ===================== */}
-      <section className="section" id="mobile-pay" style={{ paddingTop: 20, paddingBottom: 40 }}>
-        <div className="container">
-          <motion.div
-            className="cta-band glass-card"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="eyebrow">Quick Payment</span>
-            <h2>
-              Pay via <span className="grad-text">Mobile Money</span>
-            </h2>
-            <p style={{ maxWidth: 520, margin: "16px auto 24px" }}>
-              Dial the code below from your phone to pay for your license.
-            </p>
-            <a
-              href={USSD_TEL}
-              className="hp-btn hp-btn-primary"
-            >
-              <Phone size={18} />
-              <span>Dial {USSD_CODE}</span>
-            </a>
-            <small style={{ display: "block", marginTop: 10, color: "var(--muted)" }}>
-              Opens your phone's dialer with the payment code.
-            </small>
-          </motion.div>
         </div>
       </section>
 
