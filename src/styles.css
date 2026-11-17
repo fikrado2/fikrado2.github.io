@@ -5563,6 +5563,37 @@ h2.grad-text,
   margin-top: auto;
 }
 
+.pricing-price-inline {
+  flex-wrap: wrap;
+  margin: 18px 0 12px;
+}
+
+.pricing-original {
+  text-decoration: line-through;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+.pricing-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 100px;
+  color: #34d399;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.pricing-discount-badge svg {
+  flex-shrink: 0;
+}
+
 /* Software Contact Channels */
 .software-contact-channels {
   display: flex;

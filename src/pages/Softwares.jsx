@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Terminal,
@@ -9,23 +8,31 @@ import {
   Download,
   ArrowRight,
   Check,
-  PlusCircle,
   Mail,
   Phone,
   MessageCircle,
-  MapPin,
   Sparkles,
-  CreditCard,
-  Smartphone,
-  CheckCircle2,
-  ClipboardPaste,
-  Lock,
+  Tag,
 } from "lucide-react";
 import { Link } from "../compat/react-router-dom.jsx";
 import PageHero from "../components/PageHero.jsx";
 
 const USSD_CODE = "*880*0634048063*8#";
 const USSD_TEL = `tel:*880*0634048063*8%23`;
+
+const PLANS = [
+  { name: "Single", price: 20, period: "/ month" },
+];
+
+const DISCOUNT_TIERS = [10, 20, 30, 40, 50];
+
+function getDailyDiscount() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const dayOfYear = Math.floor(diff / 86400000);
+  return DISCOUNT_TIERS[dayOfYear % DISCOUNT_TIERS.length];
+}
 
 function WindowsIcon({ size = 18 }) {
   return (
@@ -59,31 +66,10 @@ function LinuxIcon({ size = 18 }) {
 }
 
 export default function Softwares() {
-  const [paymentStep, setPaymentStep] = useState("select");
-  const [paymentMethod, setPaymentMethod] = useState(null);
-  const [pastedInfo, setPastedInfo] = useState("");
-  const [receiptData, setReceiptData] = useState(null);
-
-  const handlePaymentConfirm = () => {
-    if (!pastedInfo.trim()) return;
-    const now = new Date();
-    const receiptNum = `FK-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
-    setReceiptData({
-      method: paymentMethod,
-      info: pastedInfo.trim(),
-      date: now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-      time: now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
-      receiptNum,
-    });
-    setPaymentStep("receipt");
-  };
-
-  const resetPayment = () => {
-    setPaymentStep("select");
-    setPaymentMethod(null);
-    setPastedInfo("");
-    setReceiptData(null);
-  };
+  const discountPercent = getDailyDiscount();
+  const plan = PLANS[0];
+  const discountedPrice = (plan.price * (100 - discountPercent) / 100).toFixed(2);
+  const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
     <>
@@ -352,7 +338,7 @@ export default function Softwares() {
               <span className="grad-text">License Plans</span>
             </h2>
             <p style={{ color: "var(--muted)", maxWidth: 600, margin: "12px auto 0" }}>
-              Predictable pricing for individuals, security teams, and full enterprises.
+              Predictable pricing for individual security professionals.
             </p>
           </div>
 
@@ -370,11 +356,19 @@ export default function Softwares() {
                   For individual security professionals and single systems
                 </p>
               </div>
-              <div className="pricing-price-wrap">
+
+              <div className="pricing-price-wrap pricing-price-inline">
                 <span className="pricing-currency">$</span>
-                <span className="pricing-amount">20</span>
-                <span className="pricing-period">/ month</span>
+                <span className="pricing-amount">{discountedPrice}</span>
+                <span className="pricing-period">{plan.period}</span>
+                <span className="pricing-original">$ {plan.price}{plan.period}</span>
               </div>
+
+              <div className="pricing-discount-badge">
+                <Tag size={14} />
+                <span>{discountPercent}% OFF today — {today}</span>
+              </div>
+
               <ul className="pricing-features">
                 <li>
                   <Check size={16} color="#34d399" />
@@ -398,270 +392,38 @@ export default function Softwares() {
                 <ArrowRight size={16} />
               </Link>
             </motion.div>
-
-            <motion.div
-              className="pricing-card glass-card pricing-featured"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="pricing-popular-pill">RECOMMENDED FOR TEAMS</div>
-              <div className="pricing-header">
-                <h3>Enterprise</h3>
-                <p className="pricing-tagline">
-                  Complete organizational coverage &amp; dedicated support
-                </p>
-              </div>
-              <div className="pricing-price-wrap">
-                <span className="pricing-currency">$</span>
-                <span className="pricing-amount">4,000</span>
-                <span className="pricing-period">/ year</span>
-              </div>
-              <ul className="pricing-features">
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>Complete organization-wide deployment</span>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>CLI &amp; Desktop App editions</span>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <strong>24/7 dedicated support included</strong>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <strong>Quarterly system maintenance included</strong>
-                </li>
-                <li>
-                  <Check size={16} color="#34d399" />
-                  <span>Continuous malware &amp; vulnerability updates</span>
-                </li>
-              </ul>
-              <Link to="/contact" className="hp-btn hp-btn-primary pricing-btn">
-                <span>Deploy Enterprise</span>
-                <ArrowRight size={16} />
-              </Link>
-            </motion.div>
-
-            <motion.div
-              className="pricing-card glass-card pricing-addon"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="pricing-header">
-                <div className="addon-badge">
-                  <PlusCircle size={14} color="#7dd3fc" />
-                  <span>ADD-ON OPTION</span>
-                </div>
-                <h3>Extra Support</h3>
-                <p className="pricing-tagline">
-                  On-demand expert security advisory &amp; incident sessions
-                </p>
-              </div>
-              <div className="pricing-price-wrap">
-                <span className="pricing-currency">$</span>
-                <span className="pricing-amount">90</span>
-                <span className="pricing-period">/ session</span>
-              </div>
-              <ul className="pricing-features">
-                <li>
-                  <Check size={16} color="#7dd3fc" />
-                  <span>One-time support session</span>
-                </li>
-                <li>
-                  <Check size={16} color="#7dd3fc" />
-                  <span>Direct consultation with security engineers</span>
-                </li>
-                <li>
-                  <Check size={16} color="#7dd3fc" />
-                  <span>Configuration review &amp; troubleshooting</span>
-                </li>
-                <li>
-                  <Check size={16} color="#7dd3fc" />
-                  <span>Available for Single license holders</span>
-                </li>
-              </ul>
-              <Link to="/contact" className="hp-btn hp-btn-ghost pricing-btn">
-                <span>Request Support Session</span>
-                <ArrowRight size={16} />
-              </Link>
-            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ===================== PAYMENT SECTION ===================== */}
-      <section className="section" id="payment" style={{ paddingTop: 20, paddingBottom: 80 }}>
+      {/* ===================== MOBILE MONEY PAY ===================== */}
+      <section className="section" id="mobile-pay" style={{ paddingTop: 20, paddingBottom: 40 }}>
         <div className="container">
-          <div className="section-head">
-            <span className="eyebrow">Secure Checkout</span>
+          <motion.div
+            className="cta-band glass-card"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="eyebrow">Quick Payment</span>
             <h2>
-              <span className="grad-text">Choose Your Payment Method</span>
+              Pay via <span className="grad-text">Mobile Money</span>
             </h2>
-            <p style={{ color: "var(--muted)", maxWidth: 560, margin: "12px auto 0" }}>
-              Select how you'd like to pay for your Fikrado Security Enterprise license.
+            <p style={{ maxWidth: 520, margin: "16px auto 24px" }}>
+              Dial the code below from your phone to pay for your license.
             </p>
-          </div>
-
-          {/* STEP 1: SELECT PAYMENT METHOD */}
-          {paymentStep === "select" && (
-            <motion.div
-              className="software-payment-grid"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6 }}
+            <a
+              href={USSD_TEL}
+              className="hp-btn hp-btn-primary"
             >
-              {/* Credit Card Option */}
-              <div className="payment-option-card glass-card">
-                <div className="payment-option-icon" style={{ color: "#7dd3fc", background: "rgba(125, 211, 252, 0.12)" }}>
-                  <CreditCard size={32} strokeWidth={2} />
-                </div>
-                <h3>Credit Card</h3>
-                <p>Pay securely with Visa, Mastercard, or American Express.</p>
-                <button
-                  className="hp-btn hp-btn-ghost payment-option-btn"
-                  disabled
-                  style={{ opacity: 0.5, cursor: "not-allowed" }}
-                >
-                  <Lock size={16} />
-                  <span>Coming Soon</span>
-                </button>
-                <small className="payment-option-note">
-                  Card payments are being set up. Please use Mobile Money for now.
-                </small>
-              </div>
-
-              {/* Mobile Money Option */}
-              <div className="payment-option-card glass-card">
-                <div className="payment-option-icon" style={{ color: "#34d399", background: "rgba(52, 211, 153, 0.12)" }}>
-                  <Smartphone size={32} strokeWidth={2} />
-                </div>
-                <h3>Mobile Money</h3>
-                <p>
-                  Dial <strong style={{ fontFamily: "monospace, monospace", color: "#34d399" }}>{USSD_CODE}</strong> from your phone to pay.
-                </p>
-                <a
-                  href={USSD_TEL}
-                  className="hp-btn hp-btn-primary payment-option-btn"
-                  onClick={() => {
-                    setPaymentMethod("mobile-money");
-                    setTimeout(() => setPaymentStep("confirm"), 800);
-                  }}
-                >
-                  <Phone size={16} />
-                  <span>Dial to Pay</span>
-                </a>
-                <small className="payment-option-note">
-                  Opens your phone's dialer with the payment code.
-                </small>
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 2: CONFIRM PAYMENT / PASTE INFO */}
-          {paymentStep === "confirm" && (
-            <motion.div
-              className="payment-confirm-card glass-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="payment-confirm-header">
-                <Smartphone size={24} color="#34d399" />
-                <h3>Mobile Money Payment</h3>
-              </div>
-
-              <div className="payment-confirm-instructions">
-                <p>
-                  Dial <strong style={{ fontFamily: "monospace, monospace", color: "#34d399", fontSize: "1.1em" }}>{USSD_CODE}</strong> from your phone to complete the payment.
-                </p>
-                <a href={USSD_TEL} className="hp-btn hp-btn-primary" style={{ margin: "12px 0" }}>
-                  <Phone size={16} />
-                  <span>Dial Again</span>
-                </a>
-                <p>After paying, paste your payment confirmation below:</p>
-              </div>
-
-              <textarea
-                className="payment-paste-area"
-                placeholder="Paste your payment confirmation message, transaction ID, or receipt details here..."
-                value={pastedInfo}
-                onChange={(e) => setPastedInfo(e.target.value)}
-                rows={5}
-              />
-
-              <div className="payment-confirm-actions">
-                <button
-                  className="hp-btn hp-btn-ghost"
-                  onClick={resetPayment}
-                >
-                  <span>Back</span>
-                </button>
-                <button
-                  className="hp-btn hp-btn-primary"
-                  onClick={handlePaymentConfirm}
-                  disabled={!pastedInfo.trim()}
-                  style={pastedInfo.trim() ? {} : { opacity: 0.5, cursor: "not-allowed" }}
-                >
-                  <CheckCircle2 size={18} />
-                  <span>Confirm Payment</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 3: PAYMENT RECEIPT */}
-          {paymentStep === "receipt" && receiptData && (
-            <motion.div
-              className="payment-receipt-card glass-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="payment-receipt-header">
-                <CheckCircle2 size={36} color="#34d399" />
-                <h3>Payment Confirmed</h3>
-              </div>
-
-              <div className="payment-receipt-body">
-                <div className="payment-receipt-row">
-                  <span className="payment-receipt-label">Receipt No.</span>
-                  <span className="payment-receipt-value" style={{ fontFamily: "monospace, monospace", fontWeight: 700 }}>
-                    {receiptData.receiptNum}
-                  </span>
-                </div>
-                <div className="payment-receipt-row">
-                  <span className="payment-receipt-label">Date</span>
-                  <span className="payment-receipt-value">{receiptData.date}</span>
-                </div>
-                <div className="payment-receipt-row">
-                  <span className="payment-receipt-label">Time</span>
-                  <span className="payment-receipt-value">{receiptData.time}</span>
-                </div>
-                <div className="payment-receipt-row">
-                  <span className="payment-receipt-label">Method</span>
-                  <span className="payment-receipt-value">Mobile Money (USSD)</span>
-                </div>
-                <div className="payment-receipt-divider" />
-                <div className="payment-receipt-info-block">
-                  <span className="payment-receipt-label">Your Payment Info</span>
-                  <pre className="payment-receipt-info-text">{receiptData.info}</pre>
-                </div>
-              </div>
-
-              <div className="payment-receipt-actions">
-                <button className="hp-btn hp-btn-ghost" onClick={resetPayment}>
-                  <span>Make Another Payment</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
+              <Phone size={18} />
+              <span>Dial {USSD_CODE}</span>
+            </a>
+            <small style={{ display: "block", marginTop: 10, color: "var(--muted)" }}>
+              Opens your phone's dialer with the payment code.
+            </small>
+          </motion.div>
         </div>
       </section>
 
