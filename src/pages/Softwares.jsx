@@ -13,14 +13,54 @@ import {
   MessageCircle,
   Sparkles,
   Tag,
+  Zap,
+  Cpu,
+  Lock,
+  Globe,
 } from "lucide-react";
 import { Link } from "../compat/react-router-dom.jsx";
-import PageHero from "../components/PageHero.jsx";
 
 const PLANS = [
-  { name: "Single", price: 20, period: "/ month", tagline: "For individual security professionals and single systems", features: ["Full access to CLI & Desktop App", "Real-time malware detection", "System vulnerability scanning", "AI-driven analysis updates"] },
-  { name: "Enterprise", price: 4000, period: "/ year", tagline: "Recommended for teams and growing organizations", features: ["Everything in Single, plus:", "Up to 50 licensed seats", "Centralized management dashboard", "Priority vulnerability reports", "Dedicated account manager"] },
-  { name: "Extra Support", price: 90, period: "/ session", tagline: "Add-on option for expert-guided assistance", features: ["1-on-1 expert session (60 min)", "Custom scan configuration", "Threat remediation walkthrough", "Best-practice hardening guide"] },
+  {
+    name: "Single",
+    price: 20,
+    period: "/ month",
+    tagline: "For individual security professionals and single systems",
+    features: [
+      "Full access to CLI & Desktop App",
+      "Real-time malware detection",
+      "System vulnerability scanning",
+      "AI-driven analysis updates",
+    ],
+    featured: false,
+  },
+  {
+    name: "Enterprise",
+    price: 4000,
+    period: "/ year",
+    tagline: "Recommended for teams and growing organizations",
+    features: [
+      "Everything in Single, plus:",
+      "Up to 50 licensed seats",
+      "Centralized management dashboard",
+      "Priority vulnerability reports",
+      "Dedicated account manager",
+    ],
+    featured: true,
+  },
+  {
+    name: "Extra Support",
+    price: 90,
+    period: "/ session",
+    tagline: "Add-on option for expert-guided assistance",
+    features: [
+      "1-on-1 expert session (60 min)",
+      "Custom scan configuration",
+      "Threat remediation walkthrough",
+      "Best-practice hardening guide",
+    ],
+    featured: false,
+  },
 ];
 
 const DISCOUNT_TIERS = [10, 20, 30, 40, 50];
@@ -51,7 +91,14 @@ function AppleIcon({ size = 18 }) {
 
 function LinuxIcon({ size = 18 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      style={{ color: "#ffffff" }}
+    >
       <ellipse cx="12" cy="13.5" rx="8" ry="6.8" />
       <ellipse cx="12" cy="6.6" rx="4.6" ry="4.2" />
       <path d="M10.3 2.7 L13.5 2.7 L12 0.9 Z" />
@@ -64,15 +111,27 @@ function LinuxIcon({ size = 18 }) {
   );
 }
 
+const STATS = [
+  { icon: ShieldAlert, label: "Threats Blocked", value: "1.2M+" },
+  { icon: Cpu, label: "Scan Speed", value: "0.3s" },
+  { icon: Globe, label: "Countries", value: "40+" },
+  { icon: Lock, label: "Systems Secured", value: "8,500" },
+];
+
 export default function Softwares() {
   const discountPercent = getDailyDiscount();
-  const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-  const getDiscountedPrice = (price) => (price * (100 - discountPercent) / 100).toFixed(2);
+  const today = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  const getDiscountedPrice = (price) =>
+    (price * (100 - discountPercent) / 100).toFixed(2);
 
   return (
     <>
       {/* ===================== HERO SECTION ===================== */}
-      <section className="page-hero" id="softwares-hero">
+      <section className="page-hero sw-hero" id="softwares-hero">
         <div className="container">
           <motion.span
             className="eyebrow"
@@ -97,7 +156,7 @@ export default function Softwares() {
             style={{ maxWidth: 720, margin: "0 auto 32px" }}
           >
             AI-powered security software that detects malware and checks systems for
-            vulnerabilities.
+            vulnerabilities — built for terminal power users and desktop teams alike.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -109,6 +168,22 @@ export default function Softwares() {
               <Download size={18} strokeWidth={2.4} />
               <span>Download Latest Version 2.6.87</span>
             </a>
+          </motion.div>
+
+          {/* Stats bar */}
+          <motion.div
+            className="sw-stats-bar"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            {STATS.map((s) => (
+              <div key={s.label} className="sw-stat-item">
+                <s.icon size={20} />
+                <span className="sw-stat-value">{s.value}</span>
+                <span className="sw-stat-label">{s.label}</span>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -158,13 +233,13 @@ export default function Softwares() {
                   <span className="meta-value">Built with Node.js</span>
                 </div>
                 <div className="software-meta-row">
-                  <span className="meta-label">Supported Platforms:</span>
+                  <span className="meta-label">Platforms:</span>
                   <div className="software-platforms-icons">
                     <span className="platform-tag" title="Windows">
                       <WindowsIcon size={15} /> Windows
                     </span>
                     <span className="platform-tag" title="Linux">
-                      <img src="/linux.png" alt="Linux" /> Linux
+                      <LinuxIcon size={15} /> Linux
                     </span>
                     <span className="platform-tag" title="macOS">
                       <AppleIcon size={15} /> macOS
@@ -219,13 +294,13 @@ export default function Softwares() {
                   <span className="meta-value">Native Desktop GUI</span>
                 </div>
                 <div className="software-meta-row">
-                  <span className="meta-label">Supported Platforms:</span>
+                  <span className="meta-label">Platforms:</span>
                   <div className="software-platforms-icons">
                     <span className="platform-tag" title="Windows">
                       <WindowsIcon size={15} /> Windows
                     </span>
                     <span className="platform-tag" title="Linux">
-                      <img src="/linux.png" alt="Linux" /> Linux
+                      <LinuxIcon size={15} /> Linux
                     </span>
                     <span className="platform-tag" title="macOS">
                       <AppleIcon size={15} /> macOS
@@ -251,7 +326,7 @@ export default function Softwares() {
       </section>
 
       {/* ===================== WHAT IT DOES ===================== */}
-      <section className="section" id="capabilities" style={{ paddingTop: 60, paddingBottom: 60 }}>
+      <section className="section sw-capabilities" id="capabilities">
         <div className="container">
           <div className="section-head">
             <span className="eyebrow">Core Capabilities</span>
@@ -328,15 +403,19 @@ export default function Softwares() {
       </section>
 
       {/* ===================== PRICING SECTION ===================== */}
-      <section className="section" id="pricing" style={{ paddingTop: 40, paddingBottom: 60 }}>
+      <section className="section sw-pricing" id="pricing">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">Transparent Pricing</span>
+            <span className="eyebrow">
+              <Zap size={13} style={{ display: "inline", marginRight: 6 }} />
+              Transparent Pricing
+            </span>
             <h2>
               <span className="grad-text">License Plans</span>
             </h2>
             <p style={{ color: "var(--muted)", maxWidth: 600, margin: "12px auto 0" }}>
-              Predictable pricing for individuals, teams, and expert support.
+              Predictable pricing for individuals, teams, and expert support — with daily rotating
+              discounts of {DISCOUNT_TIERS.join(", ")}%.
             </p>
           </div>
 
@@ -344,12 +423,15 @@ export default function Softwares() {
             {PLANS.map((plan, i) => (
               <motion.div
                 key={plan.name}
-                className="pricing-card glass-card"
+                className={`pricing-card glass-card${plan.featured ? " pricing-featured" : ""}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
               >
+                {plan.featured && (
+                  <span className="pricing-popular-pill">RECOMMENDED</span>
+                )}
                 <div className="pricing-header">
                   <h3>{plan.name}</h3>
                   <p className="pricing-tagline">{plan.tagline}</p>
@@ -359,12 +441,17 @@ export default function Softwares() {
                   <span className="pricing-currency">$</span>
                   <span className="pricing-amount">{getDiscountedPrice(plan.price)}</span>
                   <span className="pricing-period">{plan.period}</span>
-                  <span className="pricing-original">$ {plan.price}{plan.period}</span>
+                  <span className="pricing-original">
+                    $ {plan.price}
+                    {plan.period}
+                  </span>
                 </div>
 
                 <div className="pricing-discount-badge">
                   <Tag size={14} />
-                  <span>{discountPercent}% OFF today — {today}</span>
+                  <span>
+                    {discountPercent}% OFF today — {today}
+                  </span>
                 </div>
 
                 <ul className="pricing-features">
@@ -375,7 +462,10 @@ export default function Softwares() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/contact" className="hp-btn hp-btn-ghost pricing-btn">
+                <Link
+                  to="/contact"
+                  className={`hp-btn pricing-btn${plan.featured ? " hp-btn-primary" : " hp-btn-ghost"}`}
+                >
                   <span>Get {plan.name} License</span>
                   <ArrowRight size={16} />
                 </Link>
