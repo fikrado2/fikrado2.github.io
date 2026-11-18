@@ -5215,6 +5215,77 @@ h2.grad-text,
 /* ===========================================================
    SOFTWARES PAGE STYLING
    =========================================================== */
+
+/* Software Page Hero Enhancements */
+.sw-hero {
+  position: relative;
+}
+
+.sw-stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 48px auto 0;
+  max-width: 720px;
+  border-radius: 18px;
+  border: 1px solid var(--border-glass);
+  background: var(--panel-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.sw-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 22px 12px;
+  border-right: 1px solid var(--border-glass);
+  transition: background 0.3s ease;
+}
+
+.sw-stat-item:last-child {
+  border-right: none;
+}
+
+.sw-stat-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sw-stat-item svg {
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.sw-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1;
+}
+
+.sw-stat-label {
+  font-size: 0.76rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.sw-capabilities {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+.sw-pricing {
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
 .software-products-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -5645,6 +5716,23 @@ h2.grad-text,
   }
   .software-features-grid {
     grid-template-columns: 1fr;
+  }
+  .sw-stats-bar {
+    flex-wrap: wrap;
+    max-width: 400px;
+  }
+  .sw-stat-item {
+    flex: 1 1 45%;
+    border-bottom: 1px solid var(--border-glass);
+  }
+  .sw-stat-item:nth-child(odd) {
+    border-right: 1px solid var(--border-glass);
+  }
+  .sw-stat-item:nth-child(even) {
+    border-right: none;
+  }
+  .sw-stat-item:nth-last-child(-n+2) {
+    border-bottom: none;
   }
 }
 
